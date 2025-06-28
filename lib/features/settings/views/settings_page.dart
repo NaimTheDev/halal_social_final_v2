@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/auth/models/app_user.dart';
 import 'package:mentor_app/models/calendly_token.dart';
 import 'package:mentor_app/providers/firestore_providers.dart';
-import 'package:mentor_app/services/calendly_services.dart';
 import '../../auth/controllers/auth_controller.dart';
 
 final calendlyTokenDocProvider =
@@ -61,45 +60,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               const SizedBox(height: 24),
               _buildSectionTitle("Account"),
               _buildListItem("General"),
-              _buildListItem("Transactions"),
-              _buildListItem("Two-Factor Authentication"),
-              _buildListItem("Become an expert"),
-              if (isExpert)
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: calendlyTokenAsync.when(
-                    loading: () => const CircularProgressIndicator(),
-                    error: (e, _) => Text('Error checking Calendly: $e'),
-                    data: (token) {
-                      final isConnected = token != null;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            isConnected
-                                ? "Calendly Connected ✅"
-                                : "Calendly Not Connected ❌",
-                            style: TextStyle(
-                              color: isConnected ? Colors.green : Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
 
-                          ElevatedButton(
-                            onPressed:
-                                isConnected
-                                    ? null
-                                    : () async {
-                                      await initiateCalendlyAuth();
-                                    },
-                            child: const Text('Connect Calendly'),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
               const Divider(height: 40),
               _buildSectionTitle("Preferences"),
               _buildToggleItem("Push Notifications", pushNotificationsEnabled, (
@@ -109,14 +70,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   pushNotificationsEnabled = value;
                 });
               }),
-              const Divider(height: 40),
-              _buildSectionTitle("Support"),
-              _buildListItem("Contact us"),
-              const Divider(height: 40),
-              _buildSectionTitle("Legal"),
-              _buildListItem("Terms & Conditions"),
-              _buildListItem("Privacy Policy"),
-              const Divider(height: 40),
+
               TextButton(
                 onPressed: () async {
                   final authService = ref.read(authServiceProvider);
@@ -159,7 +113,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               user.email ?? "No Name",
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            Text(user.email ?? "No Email"),
+            Text(user.email),
           ],
         ),
       ],
