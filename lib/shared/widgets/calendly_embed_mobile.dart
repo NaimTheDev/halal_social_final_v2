@@ -16,17 +16,27 @@ class _CalendlyEmbedState extends State<CalendlyEmbed> {
   @override
   void initState() {
     super.initState();
-    final formattedUrl = '${widget.calendlyUrl}?embed_domain=yourapp.com&embed_type=Mobile';
+    final formattedUrl =
+        '${widget.calendlyUrl}?embed_domain=yourapp.com&embed_type=Mobile';
 
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(Uri.parse(formattedUrl));
+    _controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..loadRequest(Uri.parse(formattedUrl));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Schedule a Call')),
+      appBar: AppBar(
+        title: const Text('Schedule a Call'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: WebViewWidget(controller: _controller),
     );
   }

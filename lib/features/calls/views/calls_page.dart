@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mentor_app/models/scheduled_call.dart';
+import 'package:mentor_app/shared/widgets/zoom_launch_page.dart';
 
 class CallsPage extends StatelessWidget {
   const CallsPage({super.key});
@@ -125,7 +126,8 @@ class AppointmentCard extends StatelessWidget {
                 const Icon(Icons.access_time, size: 20, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
-                  '${startTime.toLocal()} → ${DateTime.parse(call.endTime).toLocal()}',
+                  // This displays the time in the device's local timezone.
+                  '${TimeOfDay.fromDateTime(startTime.toLocal()).format(context)} → ${TimeOfDay.fromDateTime(DateTime.parse(call.endTime).toLocal()).format(context)}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -134,22 +136,30 @@ class AppointmentCard extends StatelessWidget {
             if (isUpcoming)
               Align(
                 alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement join functionality
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                child: Visibility(
+                  visible: call.joinUrl != null,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (_) => ZoomLaunchPage(meetingUrl: call.joinUrl!),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    child: const Text('Join Now'),
                   ),
-                  child: const Text('Join Now'),
                 ),
               ),
           ],

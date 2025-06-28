@@ -17,6 +17,7 @@ class ScheduledCall {
   final String startTime;
   final String status;
   final String timezone;
+  final String? joinUrl; // Added joinUrl field
 
   ScheduledCall({
     required this.calendlyEventUri,
@@ -35,6 +36,7 @@ class ScheduledCall {
     required this.startTime,
     required this.status,
     required this.timezone,
+    this.joinUrl, // Added joinUrl field
   });
 
   factory ScheduledCall.fromFirestore(Map<String, dynamic> data) {
@@ -55,6 +57,7 @@ class ScheduledCall {
       startTime: data['startTime'] as String,
       status: data['status'] as String,
       timezone: data['timezone'] as String,
+      joinUrl: data['joinUrl'] as String?, // Parse joinUrl if available
     );
   }
 
@@ -76,6 +79,7 @@ class ScheduledCall {
       'startTime': startTime,
       'status': status,
       'timezone': timezone,
+      'joinUrl': joinUrl, // Serialize joinUrl if available
     };
   }
 }

@@ -12,6 +12,39 @@ const app = express();
 // eslint-disable-next-line object-curly-spacing
 app.use(express.raw({ type: "application/json" }));
 
+// Define the CallData interface
+interface CallData {
+  mentorUri: string;
+  reschedule_url: string | null;
+  cancel_url: string | null;
+  eventType: string;
+  inviteeName: string;
+  inviteeEmail: string;
+  startTime: string;
+  endTime: string;
+  calendlyEventUri: string;
+  timezone: string;
+  status: string;
+  rescheduled: boolean;
+  payment: unknown | null;
+  no_show: unknown | null;
+  reconfirmation: unknown | null;
+  createdAt: FirebaseFirestore.FieldValue;
+  joinUrl: string | null;
+}
+
+//  "LOCATION": {
+//         "DATA": {
+//           "ID": 89781174295,
+//           "SETTINGS": {},
+//           "PASSWORD": "KCDJ3S",
+//           "EXTRA": null
+//         },
+//         "JOIN_URL": "HTTPS://US05WEB.ZOOM.US/J/89781174295?PWD=MAAVUB7HTL8YW7CQLOBIJNBDPDMSFC.1",
+//         "STATUS": "PUSHED",
+//         "TYPE": "ZOOM"
+//       }
+
 app.post("/", async (req, res) => {
   // 1️⃣ Bypass signature for now (insecure)
 
@@ -22,12 +55,16 @@ app.post("/", async (req, res) => {
   try {
     // eslint-disable-next-line object-curly-spacing
     const { payload: p } = body;
+    functions.logger.info(
+      "WEBHOOK BODY: " + JSON.stringify(body).toUpperCase()
+    );
     const email = p.email;
 
-    const callData = {
+    // Update the callData object to use the CallData type
+    const callData: CallData = {
       mentorUri: p.scheduled_event.uri,
-      reschedule_url: p.reschedule_url,
-      cancel_url: p.cancel_url,
+      reschedule_url: p.reschedule_url || null,
+      cancel_url: p.cancel_url || null,
       eventType: p.scheduled_event.name,
       inviteeName: p.name,
       inviteeEmail: p.email,
@@ -37,10 +74,11 @@ app.post("/", async (req, res) => {
       timezone: p.timezone,
       status: p.status,
       rescheduled: p.rescheduled,
-      payment: p.payment,
-      no_show: p.no_show,
-      reconfirmation: p.reconfirmation,
+      payment: p.payment || null,
+      no_show: p.no_show || null,
+      reconfirmation: p.reconfirmation || null,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      joinUrl: p.scheduled_event.location?.join_url || null,
     };
 
     try {
