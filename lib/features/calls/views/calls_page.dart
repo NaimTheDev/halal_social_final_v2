@@ -114,7 +114,7 @@ class AppointmentCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              call.eventType,
+              '${call.eventType} with ${call.inviteeName}',
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
