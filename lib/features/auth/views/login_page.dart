@@ -19,36 +19,36 @@ class LoginPage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            Center(child: Image.asset('assets/logo.png', height: 40)), // Optional logo
             const SizedBox(height: 20),
-            const Text('Log in', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            const Text(
+              'Log in',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: email,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-              ),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: password,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
+              decoration: const InputDecoration(labelText: 'Password'),
             ),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-               
-                Text("Forgot your password?", style: TextStyle(color: Colors.blue)),
+                Text(
+                  "Forgot your password?",
+                  style: TextStyle(color: Colors.blue),
+                ),
               ],
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-                child: ElevatedButton(
+              child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
@@ -70,7 +70,12 @@ class LoginPage extends HookConsumerWidget {
                 child: const Text.rich(
                   TextSpan(
                     text: "Don’t have an account? ",
-                    children: [TextSpan(text: 'Sign up', style: TextStyle(color: Colors.blue))],
+                    children: [
+                      TextSpan(
+                        text: 'Sign up',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
                   ),
                 ),
               ),
