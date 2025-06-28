@@ -6,19 +6,22 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(child: _buildSearchBar(context)),
-          SliverToBoxAdapter(child: _buildCategoryChips()),
-          SliverToBoxAdapter(child: _buildSectionHeader('Featured Experts')),
-          SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(child: _buildSearchBar(context)),
+            SliverToBoxAdapter(child: _buildCategoryChips()),
+            SliverToBoxAdapter(child: _buildSectionHeader('Featured Experts')),
+            SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
 
-          SliverToBoxAdapter(child: _buildSectionHeader('Coaching')),
-          SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
+            SliverToBoxAdapter(child: _buildSectionHeader('Coaching')),
+            SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
 
-          SliverToBoxAdapter(child: _buildSectionHeader('Marriage')),
-          SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
-        ],
+            SliverToBoxAdapter(child: _buildSectionHeader('Marriage')),
+            SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
+          ],
+        ),
       ),
     );
   }

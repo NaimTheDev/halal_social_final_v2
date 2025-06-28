@@ -73,8 +73,15 @@ class CallsPage extends StatelessWidget {
           length: 2,
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Calendar'),
+              title: const Text(
+                'Calendar',
+                style: TextStyle(color: Colors.white),
+              ),
+              iconTheme: const IconThemeData(color: Colors.white),
               bottom: const TabBar(
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white70,
+                indicatorColor: Colors.white,
                 tabs: [Tab(text: 'Upcoming'), Tab(text: 'Past')],
               ),
             ),
