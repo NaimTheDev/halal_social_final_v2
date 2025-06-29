@@ -6,7 +6,7 @@ class AuthService {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
 
-  Future<void> signUp(String email, String password, UserRole role) async {
+  Future<AppUser> signUp(String email, String password, UserRole role) async {
     final credential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -19,6 +19,8 @@ class AuthService {
       'role': role.name,
       'createdAt': FieldValue.serverTimestamp(),
     });
+
+    return AppUser(uid: uid, email: email, role: role);
   }
 
   Future<void> login(String email, String password) async {
@@ -33,9 +35,9 @@ class AuthService {
     return AppUser.fromMap(user.uid, snapshot.data() ?? {});
   }
 
-  
-
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
   Future<void> signOut() => _auth.signOut();
+
+  updateProfileData({required List<String> categories, String? calendlyUrl}) {}
 }

@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../controllers/auth_controller.dart';
 import '../models/app_user.dart';
+import 'onboarding_page.dart';
 
 class SignupPage extends HookConsumerWidget {
   const SignupPage({super.key});
@@ -23,19 +24,39 @@ class SignupPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Sign up', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            const Text(
+              'Sign up',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 6),
             const Text("Please enter your information"),
             const SizedBox(height: 24),
-            TextField(controller: firstName, decoration: const InputDecoration(labelText: "First Name")),
+            TextField(
+              controller: firstName,
+              decoration: const InputDecoration(labelText: "First Name"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: lastName, decoration: const InputDecoration(labelText: "Last Name")),
+            TextField(
+              controller: lastName,
+              decoration: const InputDecoration(labelText: "Last Name"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: email, decoration: const InputDecoration(labelText: "Email")),
+            TextField(
+              controller: email,
+              decoration: const InputDecoration(labelText: "Email"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: "Password")),
+            TextField(
+              controller: password,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: "Password"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: confirmPassword, obscureText: true, decoration: const InputDecoration(labelText: "Confirm Password")),
+            TextField(
+              controller: confirmPassword,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: "Confirm Password"),
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -43,32 +64,53 @@ class SignupPage extends HookConsumerWidget {
                   value: acceptedTerms.value,
                   onChanged: (v) => acceptedTerms.value = v ?? false,
                 ),
-                const Expanded(child: Text.rich(TextSpan(
-                  text: "I agree with ",
-                  children: [
-                    TextSpan(text: "Privacy Policy", style: TextStyle(color: Colors.blue)),
-                    TextSpan(text: " and "),
-                    TextSpan(text: "T&C", style: TextStyle(color: Colors.blue)),
-                  ],
-                ))),
+                const Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: "I agree with ",
+                      children: [
+                        TextSpan(
+                          text: "Privacy Policy",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                        TextSpan(text: " and "),
+                        TextSpan(
+                          text: "T&C",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: acceptedTerms.value
-                    ? () async {
-                        final auth = ref.read(authServiceProvider);
-                        await auth.signUp(
-                          email.text,
-                          password.text,
-                          UserRole.mentee,
-                        );
-                      }
-                    : null,
+                onPressed:
+                    acceptedTerms.value
+                        ? () async {
+                          final auth = ref.read(authServiceProvider);
+                          final user = await auth.signUp(
+                            email.text,
+                            password.text,
+                            UserRole.mentee,
+                          );
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => CustomOnboarding(
+                                    isMentor: user.role == UserRole.mentor,
+                                  ),
+                            ),
+                          );
+                        }
+                        : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: acceptedTerms.value ? Colors.black : Colors.grey.shade400,
+                  backgroundColor:
+                      acceptedTerms.value ? Colors.black : Colors.grey.shade400,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text(
@@ -86,7 +128,12 @@ class SignupPage extends HookConsumerWidget {
                 child: const Text.rich(
                   TextSpan(
                     text: "Already have an account? ",
-                    children: [TextSpan(text: 'Login', style: TextStyle(color: Colors.red))],
+                    children: [
+                      TextSpan(
+                        text: 'Login',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
                   ),
                 ),
               ),
