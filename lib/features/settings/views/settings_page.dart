@@ -48,7 +48,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (user) {
-        final isExpert = user!.role.name == 'mentor';
+        if (user == null) {
+          return const Scaffold(
+            body: Center(child: Text('No user data available.')),
+          );
+        }
+
+        final isExpert = user.role.name == 'mentor';
         final calendlyTokenAsync = ref.watch(calendlyTokenProvider(user.uid));
 
         return Scaffold(
@@ -75,6 +81,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 onPressed: () async {
                   final authService = ref.read(authServiceProvider);
                   await authService.signOut();
+                  Navigator.of(context).pushReplacementNamed('/auth');
                 },
                 child: const Text(
                   "Log Out",
@@ -110,7 +117,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              user.email,
+              user.email ?? 'No email available',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             Text(user.email),

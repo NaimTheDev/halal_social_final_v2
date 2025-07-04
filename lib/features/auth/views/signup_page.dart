@@ -3,18 +3,20 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../controllers/auth_controller.dart';
 import '../models/app_user.dart';
+import 'package:mentor_app/features/onboarding/onboarding_flow.dart';
 
 class SignupPage extends HookConsumerWidget {
   const SignupPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final firstName = useTextEditingController();
-    final lastName = useTextEditingController();
-    final email = useTextEditingController();
-    final password = useTextEditingController();
-    final confirmPassword = useTextEditingController();
+    final firstNameController = useTextEditingController();
+    final lastNameController = useTextEditingController();
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
+    final confirmPasswordController = useTextEditingController();
     final acceptedTerms = useState(false);
+    final isMentor = useState(false);
 
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
@@ -23,52 +25,115 @@ class SignupPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Sign up', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            const Text(
+              'Sign up',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 6),
             const Text("Please enter your information"),
             const SizedBox(height: 24),
-            TextField(controller: firstName, decoration: const InputDecoration(labelText: "First Name")),
+            TextField(
+              controller: firstNameController,
+              decoration: const InputDecoration(labelText: "First Name"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: lastName, decoration: const InputDecoration(labelText: "Last Name")),
+            TextField(
+              controller: lastNameController,
+              decoration: const InputDecoration(labelText: "Last Name"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: email, decoration: const InputDecoration(labelText: "Email")),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Email"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: "Password")),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: "Password"),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: confirmPassword, obscureText: true, decoration: const InputDecoration(labelText: "Confirm Password")),
+            TextField(
+              controller: confirmPasswordController,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: "Confirm Password"),
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Checkbox(
                   value: acceptedTerms.value,
-                  onChanged: (v) => acceptedTerms.value = v ?? false,
+                  onChanged: (value) => acceptedTerms.value = value ?? false,
                 ),
-                const Expanded(child: Text.rich(TextSpan(
-                  text: "I agree with ",
-                  children: [
-                    TextSpan(text: "Privacy Policy", style: TextStyle(color: Colors.blue)),
-                    TextSpan(text: " and "),
-                    TextSpan(text: "T&C", style: TextStyle(color: Colors.blue)),
-                  ],
-                ))),
+                const Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: "I agree with ",
+                      children: [
+                        TextSpan(
+                          text: "Privacy Policy",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                        TextSpan(text: " and "),
+                        TextSpan(
+                          text: "T&C",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<bool>(
+                    title: const Text("Mentor"),
+                    value: true,
+                    groupValue: isMentor.value,
+                    onChanged: (value) => isMentor.value = value ?? false,
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<bool>(
+                    title: const Text("Mentee"),
+                    value: false,
+                    groupValue: isMentor.value,
+                    onChanged: (value) => isMentor.value = value ?? false,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: acceptedTerms.value
-                    ? () async {
-                        final auth = ref.read(authServiceProvider);
-                        await auth.signUp(
-                          email.text,
-                          password.text,
-                          UserRole.mentee,
-                        );
-                      }
-                    : null,
+                onPressed:
+                    acceptedTerms.value
+                        ? () async {
+                          final authService = ref.read(authServiceProvider);
+                          await authService.signUp(
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                            isMentor.value ? UserRole.mentor : UserRole.mentee,
+                          );
+                          if (context.mounted) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => OnboardingFlow(
+                                      isMentor: isMentor.value,
+                                    ),
+                              ),
+                            );
+                          }
+                        }
+                        : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: acceptedTerms.value ? Colors.black : Colors.grey.shade400,
+                  backgroundColor:
+                      acceptedTerms.value ? Colors.black : Colors.grey.shade400,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text(
@@ -81,12 +146,17 @@ class SignupPage extends HookConsumerWidget {
             Center(
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pop(context); // back to login
+                  Navigator.pop(context);
                 },
                 child: const Text.rich(
                   TextSpan(
                     text: "Already have an account? ",
-                    children: [TextSpan(text: 'Login', style: TextStyle(color: Colors.red))],
+                    children: [
+                      TextSpan(
+                        text: 'Login',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
                   ),
                 ),
               ),

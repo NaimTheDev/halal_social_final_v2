@@ -8,8 +8,8 @@ class LoginPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final email = useTextEditingController();
-    final password = useTextEditingController();
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
 
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
@@ -19,31 +19,33 @@ class LoginPage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const SizedBox(height: 20),
             const Text(
               'Log in',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             TextField(
-              controller: email,
+              controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 16),
             TextField(
-              controller: password,
+              controller: passwordController,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
             ),
             const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: GestureDetector(
+                onTap: () {
+                  // Handle forgot password logic
+                },
+                child: const Text(
                   "Forgot your password?",
                   style: TextStyle(color: Colors.blue),
                 ),
-              ],
+              ),
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -55,8 +57,12 @@ class LoginPage extends HookConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () async {
-                  final auth = ref.read(authServiceProvider);
-                  await auth.login(email.text, password.text);
+                  final authService = ref.read(authServiceProvider);
+                  await authService.login(
+                    emailController.text.trim(),
+                    passwordController.text.trim(),
+                  );
+                  Navigator.of(context).pushReplacementNamed('/Home');
                 },
                 child: const Text('Continue'),
               ),

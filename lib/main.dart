@@ -43,6 +43,8 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignupPage(),
         '/Mentor': (context) => const BrowseMentorsPage(),
+        '/auth': (context) => const AuthPage(),
+        '/sign-in': (context) => const LoginPage(),
       },
     );
   }
