@@ -24,7 +24,7 @@ class _MainShellPageState extends ConsumerState<MainShellPage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       const HomePage(),
-      CategoriesPage(),
+      // CategoriesPage(),
       ChatsPage(),
       CallsPage(),
       SettingsPage(ref: ref), // Pass ref to SettingsPage
@@ -39,10 +39,16 @@ class _MainShellPageState extends ConsumerState<MainShellPage> {
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.grid_view), label: 'Categories'),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.grid_view),
+          //   label: 'Categories',
+          // ),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
           BottomNavigationBarItem(icon: Icon(Icons.video_call), label: 'Calls'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
       ),
     );

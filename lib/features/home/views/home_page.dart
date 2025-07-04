@@ -10,34 +10,33 @@ class HomePage extends StatelessWidget {
         color: Theme.of(context).scaffoldBackgroundColor,
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: _buildSearchBar(context)),
+            // SliverToBoxAdapter(child: _buildSearchBar(context)),
             SliverToBoxAdapter(child: _buildCategoryChips()),
-            SliverToBoxAdapter(child: _buildSectionHeader('Featured Experts')),
-            SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
 
-            SliverToBoxAdapter(child: _buildSectionHeader('Coaching')),
-            SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
-
-            SliverToBoxAdapter(child: _buildSectionHeader('Marriage')),
-            SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
+            // SliverToBoxAdapter(child: _buildSectionHeader('Featured Experts')),
+            // SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
+            // SliverToBoxAdapter(child: _buildSectionHeader('Coaching')),
+            // SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
+            // SliverToBoxAdapter(child: _buildSectionHeader('Marriage')),
+            // SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Find an expert...',
-          prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-    );
-  }
+  // Widget _buildSearchBar(BuildContext context) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16),
+  //     child: TextField(
+  //       decoration: InputDecoration(
+  //         hintText: 'Find an expert...',
+  //         prefixIcon: const Icon(Icons.search),
+  //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildCategoryChips() {
     final categories = [

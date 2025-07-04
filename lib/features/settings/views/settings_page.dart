@@ -81,7 +81,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 onPressed: () async {
                   final authService = ref.read(authServiceProvider);
                   await authService.signOut();
-                  Navigator.of(context).pushReplacementNamed('/auth');
+                  Navigator.of(context).pushReplacementNamed('/sign-in');
+                  ref.invalidate(currentUserProvider);
                 },
                 child: const Text(
                   "Log Out",

@@ -13,12 +13,49 @@ class OnboardingFlow extends ConsumerStatefulWidget {
 
 class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
   final List<String> _allCategories = [
-    'Faith',
+    'Addiction',
+    'Advisory',
+    'Arabic',
+    'Architecture',
+    'Art',
+    'Business',
+    'Career Planning',
+    'Charity & Non-Profits',
     'Coaching',
+    'Comedy',
+    'Content Creation',
+    'Dawah',
+    'Debate & Apologetics',
+    'E-Commerce',
+    'Education',
+    'Entertainment',
+    'Entrepreneurship',
+    'Faith & Spirituality',
+    'Family',
+    'Fiqh Studies',
+    'Fitness & Nutrition',
+    'Health Studies',
+    'Health & Wellness',
+    'Home Economics',
+    'Islamic Finance',
     'Marriage',
-    'Career',
-    'Health',
-    'Finance',
+    'Martial Arts',
+    'Mental Health',
+    'Parenting',
+    'Philosophy',
+    'Podcasting',
+    'Politics',
+    'Public Speaking',
+    'Quran Studies',
+    'Real Estate',
+    'Relationships',
+    'Self-Improvement',
+    'Stocks & Crypto',
+    'Strength & Conditioning',
+    'Theology',
+    'Therapy',
+    'Wealth Management',
+    'YouTube Creator',
   ];
   final List<String> _selectedCategories = [];
   String? _calendlyUrl;
@@ -47,9 +84,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'Select your interests',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        Text(
+          widget.isMentor ? 'Select your expertise' : 'Select your interests',
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Wrap(
