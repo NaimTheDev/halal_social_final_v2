@@ -74,7 +74,7 @@ final ThemeData appTheme = ThemeData(
   ),
 
   // Card styling for featured experts, trending consultations, etc.
-  cardTheme: const CardTheme(
+  cardTheme: const CardThemeData(
     color: AppColors.surface,
     elevation: 2,
     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),

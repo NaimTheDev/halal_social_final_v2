@@ -110,7 +110,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              user.email ?? "No Name",
+              user.email,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             Text(user.email),
@@ -128,9 +128,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget _buildListItem(String title) => ListTile(
     title: Text(title),
     trailing: const Icon(Icons.chevron_right),
-    onTap: () {
-      // TODO: Implement navigation
-    },
+    onTap: () {},
   );
 
   Widget _buildToggleItem(

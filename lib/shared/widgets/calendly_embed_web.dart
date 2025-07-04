@@ -1,6 +1,6 @@
 import 'dart:html' as html;
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'dart:ui_web' as ui_web; // <-- Changed import to dart:ui_web
 
 class CalendlyEmbed extends StatefulWidget {
   final String calendlyUrl;
@@ -35,8 +35,8 @@ class _CalendlyEmbedState extends State<CalendlyEmbed> {
 
     element.append(script);
 
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
+    // Use ui_web.platformViewRegistry instead of ui.platformViewRegistry
+    ui_web.platformViewRegistry.registerViewFactory(
       viewType,
       (int viewId) => element,
     );
