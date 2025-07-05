@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -104,12 +105,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           child: Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Text('Image', style: TextStyle(color: Colors.white)),
+
+            child: Column(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: user.imageUrl ?? '',
+                  fit: BoxFit.cover,
+                  errorWidget:
+                      (context, url, error) => const Icon(
+                        Icons.person,
+                        size: 32,
+                        color: Colors.white,
+                      ),
+                  placeholder:
+                      (context, url) => const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                ),
+              ],
             ),
           ),
         ),
