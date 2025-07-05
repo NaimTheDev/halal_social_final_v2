@@ -1,42 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class HomePage extends StatelessWidget {
+import '../../mentors/controllers/mentor_controller.dart';
+import '../../mentors/views/mentor_profile_page.dart';
+import '../../mentors/views/browse_mentors_page.dart';
+
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SafeArea(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: CustomScrollView(
           slivers: [
-            // SliverToBoxAdapter(child: _buildSearchBar(context)),
+            SliverToBoxAdapter(child: _buildSearchBar(context)),
             SliverToBoxAdapter(child: _buildCategoryChips()),
-
-            // SliverToBoxAdapter(child: _buildSectionHeader('Featured Experts')),
-            // SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
-            // SliverToBoxAdapter(child: _buildSectionHeader('Coaching')),
-            // SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
-            // SliverToBoxAdapter(child: _buildSectionHeader('Marriage')),
-            // SliverToBoxAdapter(child: _buildHorizontalMentorCards()),
+            SliverToBoxAdapter(
+              child: _buildSectionHeader(
+                'Featured Mentors',
+                onSeeAllPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BrowseMentorsPage(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SliverToBoxAdapter(child: _buildHorizontalMentorCards(ref)),
           ],
         ),
       ),
     );
   }
 
-  // Widget _buildSearchBar(BuildContext context) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(16),
-  //     child: TextField(
-  //       decoration: InputDecoration(
-  //         hintText: 'Find an expert...',
-  //         prefixIcon: const Icon(Icons.search),
-  //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _buildSearchBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search for mentors...',
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    );
+  }
 
   Widget _buildCategoryChips() {
     final categories = [
@@ -61,7 +73,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, {VoidCallback? onSeeAllPressed}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -71,44 +83,74 @@ class HomePage extends StatelessWidget {
             title,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
-          const Text('See all', style: TextStyle(color: Colors.blue)),
+          GestureDetector(
+            onTap: onSeeAllPressed,
+            child: const Text('See all', style: TextStyle(color: Colors.blue)),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHorizontalMentorCards() {
-    return SizedBox(
-      height: 140,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return Container(
-            width: 120,
-            margin: const EdgeInsets.only(right: 12),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.grey[200],
-            ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(radius: 24),
-                SizedBox(height: 8),
-                Text(
-                  'Mohamed Mohamed',
-                  style: TextStyle(fontSize: 12),
-                  textAlign: TextAlign.center,
-                ),
-                Text('5.0 ★', style: TextStyle(fontSize: 10)),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+  Widget _buildHorizontalMentorCards(WidgetRef ref) {
+    return ref
+        .watch(mentorsProvider)
+        .when(
+          data: (mentors) {
+            final featuredMentors = mentors.take(5).toList();
+            return SizedBox(
+              height: 140,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: featuredMentors.length,
+                itemBuilder: (context, index) {
+                  final mentor = featuredMentors[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MentorProfilePage(mentor: mentor),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 120,
+                      margin: const EdgeInsets.only(right: 12),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.grey[200],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundImage: NetworkImage(mentor.imageUrl),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            mentor.name,
+                            style: const TextStyle(fontSize: 12),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            '${mentor.expertise}',
+                            style: const TextStyle(fontSize: 10),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+        );
   }
 }

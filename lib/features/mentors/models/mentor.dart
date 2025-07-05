@@ -5,6 +5,7 @@ class Mentor {
   final String expertise;
   final String imageUrl;
   final String? calendlyUrl;
+  final List<String>? categories;
 
   Mentor({
     required this.id,
@@ -13,6 +14,7 @@ class Mentor {
     required this.expertise,
     required this.imageUrl,
     this.calendlyUrl,
+    this.categories,
   });
 
   factory Mentor.fromMap(String id, Map<String, dynamic> data) {
@@ -23,6 +25,10 @@ class Mentor {
       expertise: data['expertise'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
       calendlyUrl: data['calendlyUrl'],
+      categories:
+          (data['categories'] as List<dynamic>?)
+              ?.map((cat) => cat.toString())
+              .toList(),
     );
   }
 }

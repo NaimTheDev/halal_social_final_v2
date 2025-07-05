@@ -4,6 +4,7 @@ import 'package:mentor_app/features/calls/views/calls_page.dart';
 import 'package:mentor_app/features/categories/views/categories_page.dart';
 import 'package:mentor_app/features/chats/views/chats_page.dart';
 import 'package:mentor_app/features/home/views/home_page.dart';
+import 'package:mentor_app/features/mentors/views/browse_mentors_page.dart';
 import 'package:mentor_app/features/settings/views/settings_page.dart';
 
 class MainShellPage extends ConsumerStatefulWidget {
@@ -24,7 +25,7 @@ class _MainShellPageState extends ConsumerState<MainShellPage> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       const HomePage(),
-      // CategoriesPage(),
+      BrowseMentorsPage(),
       ChatsPage(),
       CallsPage(),
       SettingsPage(ref: ref), // Pass ref to SettingsPage
@@ -39,10 +40,7 @@ class _MainShellPageState extends ConsumerState<MainShellPage> {
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.grid_view),
-          //   label: 'Categories',
-          // ),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Mentors'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
           BottomNavigationBarItem(icon: Icon(Icons.video_call), label: 'Calls'),
           BottomNavigationBarItem(
