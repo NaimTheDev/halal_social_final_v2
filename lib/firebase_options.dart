@@ -50,6 +50,7 @@ class DefaultFirebaseOptions {
     projectId: 'halal-social-prod',
     authDomain: 'halal-social-prod.firebaseapp.com',
     storageBucket: 'halal-social-prod.firebasestorage.app',
+    databaseURL: 'https://halal-social-prod-default-rtdb.firebaseio.com/',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '851556269464',
     projectId: 'halal-social-prod',
     storageBucket: 'halal-social-prod.firebasestorage.app',
+    databaseURL: 'https://halal-social-prod-default-rtdb.firebaseio.com/',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -67,6 +69,7 @@ class DefaultFirebaseOptions {
     projectId: 'halal-social-prod',
     storageBucket: 'halal-social-prod.firebasestorage.app',
     iosBundleId: 'com.example.mentorApp',
+    databaseURL: 'https://halal-social-prod-default-rtdb.firebaseio.com/',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -76,5 +79,6 @@ class DefaultFirebaseOptions {
     projectId: 'halal-social-prod',
     storageBucket: 'halal-social-prod.firebasestorage.app',
     iosBundleId: 'com.example.mentorApp',
+    databaseURL: 'https://halal-social-prod-default-rtdb.firebaseio.com/',
   );
 }

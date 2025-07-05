@@ -1,59 +1,58 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ChatsPage extends StatelessWidget {
+class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
+
+  @override
+  State<ChatsPage> createState() => _ChatsPageState();
+}
+
+class _ChatsPageState extends State<ChatsPage> {
+  final CollectionReference _chatCollection = FirebaseFirestore.instance
+      .collection('chats');
+  List<Map<String, dynamic>> _activeChats = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchActiveChats();
+  }
+
+  void _fetchActiveChats() {
+    _chatCollection.snapshots().listen((snapshot) {
+      setState(() {
+        _activeChats =
+            snapshot.docs.map((doc) {
+              return {'chatId': doc.id, ...doc.data() as Map<String, dynamic>};
+            }).toList();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Chats')),
-      body: Center(
-        child: Container(
-          width: 300,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 12,
-                offset: Offset(0, 4),
-              ),
-            ],
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cancel_outlined, size: 40, color: Colors.black38),
-              const SizedBox(height: 12),
-              const Text(
-                'No chats',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "You don’t have any conversations yet. Tap the button below to find an expert & get started!",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // TODO: Navigate to browse expert or home
-                  Navigator.pushNamed(context, '/Mentor');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text('Find an Expert'),
-              )
-            ],
-          ),
-        ),
+      body: ListView.builder(
+        itemCount: _activeChats.length,
+        itemBuilder: (context, index) {
+          final chat = _activeChats[index];
+          return ListTile(
+            title: Text('Chat with ${chat['mentorId']}'),
+            subtitle: Text(
+              'Last active: ${DateTime.fromMillisecondsSinceEpoch(chat['timestamp']).toLocal()}',
+            ),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/ChatDetail',
+                arguments: chat['chatId'],
+              );
+            },
+          );
+        },
       ),
     );
   }

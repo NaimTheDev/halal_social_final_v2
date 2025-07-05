@@ -55,6 +55,8 @@ dependencies:
       url: https://github.com/Neotech-iHoops/flutter_cached_network_image.git
       ref: develop
       path: cached_network_image
+  firebase_database: ^11.3.9
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

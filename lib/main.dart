@@ -5,6 +5,8 @@ import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
 import 'package:mentor_app/features/auth/views/auth_page.dart';
 import 'package:mentor_app/features/auth/views/login_page.dart';
 import 'package:mentor_app/features/auth/views/signup_page.dart';
+import 'package:mentor_app/features/chats/views/chat_detail_page.dart';
+import 'package:mentor_app/features/chats/views/chats_page.dart';
 import 'package:mentor_app/features/home/views/home_selector_page.dart';
 import 'package:mentor_app/features/mentors/views/browse_mentors_page.dart';
 import 'package:mentor_app/features/shell/main_shell_page.dart';
@@ -24,6 +26,9 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateChangesProvider);
+    final appUserAsync = ref.watch(currentUserProvider);
+    final appUser = appUserAsync.asData?.value;
+
     return MaterialApp(
       title: 'Mentor App',
       theme: appTheme,
@@ -45,6 +50,8 @@ class MyApp extends ConsumerWidget {
         '/Mentor': (context) => const BrowseMentorsPage(),
         '/auth': (context) => const AuthPage(),
         '/sign-in': (context) => const LoginPage(),
+        '/Chats': (context) => const ChatsPage(),
+        '/ChatDetail': (context) => ChatDetailPage(chatId: appUser!.uid),
       },
     );
   }
