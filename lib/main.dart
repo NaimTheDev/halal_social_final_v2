@@ -15,7 +15,15 @@ import 'package:mentor_app/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (Firebase.apps.isEmpty) {
+    print('Initializing Firebase...');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+      name: 'mentor-app',
+    );
+  } else {
+    print('Firebase already initialized.');
+  }
   runApp(const ProviderScope(child: MyApp()));
 }
 

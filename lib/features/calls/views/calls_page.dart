@@ -132,10 +132,24 @@ class AppointmentCard extends StatelessWidget {
               children: [
                 const Icon(Icons.access_time, size: 20, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(
-                  // This displays the time in the device's local timezone.
-                  '${TimeOfDay.fromDateTime(startTime.toLocal()).format(context)} → ${TimeOfDay.fromDateTime(DateTime.parse(call.endTime).toLocal()).format(context)}',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Date in mm/dd/yyyy
+                    Text(
+                      '${startTime.toLocal().month.toString().padLeft(2, '0')}/'
+                      '${startTime.toLocal().day.toString().padLeft(2, '0')}/'
+                      '${startTime.toLocal().year}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    // Start time -> End time
+                    Text(
+                      '${TimeOfDay.fromDateTime(startTime.toLocal()).format(context)}'
+                      ' → '
+                      '${TimeOfDay.fromDateTime(DateTime.parse(call.endTime).toLocal()).format(context)}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
               ],
             ),
