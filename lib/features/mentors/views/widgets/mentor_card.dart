@@ -20,9 +20,12 @@ class MentorCard extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(mentor.imageUrl),
-            ),
+            leading:
+                mentor.imageUrl != null && mentor.imageUrl!.isNotEmpty
+                    ? CircleAvatar(
+                      backgroundImage: NetworkImage(mentor.imageUrl!),
+                    )
+                    : const CircleAvatar(child: Icon(Icons.person)),
             title: Text(mentor.name),
             subtitle: Text(mentor.expertise),
             onTap: onTap,

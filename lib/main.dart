@@ -51,7 +51,10 @@ class MyApp extends ConsumerWidget {
         '/auth': (context) => const AuthPage(),
         '/sign-in': (context) => const LoginPage(),
         '/Chats': (context) => const ChatsPage(),
-        '/ChatDetail': (context) => ChatDetailPage(chatId: appUser!.uid),
+        '/ChatDetail':
+            (context) => ChatDetailPage(
+              chatId: ModalRoute.of(context)!.settings.arguments as String,
+            ),
       },
     );
   }

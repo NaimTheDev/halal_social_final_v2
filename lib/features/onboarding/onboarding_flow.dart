@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OnboardingFlow extends ConsumerStatefulWidget {
   final bool isMentor;
@@ -61,7 +62,13 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
   String? _calendlyUrl;
   int _currentPage = 0;
 
-  int get _totalPages => widget.isMentor ? 3 : 2;
+  String? _bio;
+  String? _expertise;
+
+  String? _firstName;
+  String? _lastName;
+
+  int get _totalPages => widget.isMentor ? 4 : 2;
 
   void _nextPage() {
     if (_currentPage < _totalPages - 1) {
@@ -73,10 +80,41 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
     }
   }
 
-  void _finish() {
+  void _finish() async {
     final authService = ref.read(authServiceProvider);
+    final firestore = FirebaseFirestore.instance;
+
     // Update profile data and navigate to home
-    authService.updateProfileData(_selectedCategories, _calendlyUrl);
+    await authService.updateProfileData(
+      _selectedCategories,
+      _calendlyUrl,
+      bio: widget.isMentor ? _bio : null,
+      expertise: widget.isMentor ? _expertise : null,
+      firstName: _firstName,
+      lastName: _lastName,
+    );
+
+    if (widget.isMentor) {
+      final currentUser = await authService.getCurrentUserData();
+      final mentorData = {
+        'email': currentUser?.email ?? '',
+        'name': "$_firstName $_lastName",
+        'firstName': _firstName,
+        'lastName': _lastName,
+        'bio': _bio ?? '',
+        'expertise': _expertise ?? '',
+        'calendlyUrl': _calendlyUrl ?? '',
+        'categories': _selectedCategories,
+      };
+      await firestore
+          .collection('mentors')
+          .doc(currentUser?.uid)
+          .set(mentorData);
+    }
+
+    // Invalidate currentUserProvider to refresh user data
+    ref.invalidate(currentUserProvider);
+
     Navigator.of(context).pushReplacementNamed('/Home');
   }
 
@@ -141,6 +179,66 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
     );
   }
 
+  Widget _buildBioAndExpertisePage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'Tell us about yourself',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          decoration: const InputDecoration(
+            labelText: 'Bio',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) => _bio = value,
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          decoration: const InputDecoration(
+            labelText: 'Expertise',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) => _expertise = value,
+        ),
+        const Spacer(),
+        ElevatedButton(onPressed: _nextPage, child: const Text('Next')),
+      ],
+    );
+  }
+
+  Widget _buildNamePage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'Enter your name',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          decoration: const InputDecoration(
+            labelText: 'First Name',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) => _firstName = value,
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          decoration: const InputDecoration(
+            labelText: 'Last Name',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) => _lastName = value,
+        ),
+        const Spacer(),
+        ElevatedButton(onPressed: _nextPage, child: const Text('Next')),
+      ],
+    );
+  }
+
   Widget _buildSummaryPage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,6 +261,20 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
           ),
           ListTile(title: Text(_calendlyUrl!)),
         ],
+        if (widget.isMentor) ...[
+          const SizedBox(height: 16),
+          const Text(
+            'Bio:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          ListTile(title: Text(_bio ?? '')),
+          const SizedBox(height: 16),
+          const Text(
+            'Expertise:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          ListTile(title: Text(_expertise ?? '')),
+        ],
         const Spacer(),
         ElevatedButton(onPressed: _finish, child: const Text('Finish')),
       ],
@@ -174,12 +286,19 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
     Widget body;
     switch (_currentPage) {
       case 0:
-        body = _buildCategoriesPage();
+        body = _buildNamePage();
         break;
       case 1:
-        body = widget.isMentor ? _buildMentorPage() : _buildSummaryPage();
+        body = _buildCategoriesPage();
         break;
       case 2:
+        body =
+            widget.isMentor ? _buildBioAndExpertisePage() : _buildSummaryPage();
+        break;
+      case 3:
+        body = widget.isMentor ? _buildMentorPage() : _buildSummaryPage();
+        break;
+      case 4:
         body = _buildSummaryPage();
         break;
       default:

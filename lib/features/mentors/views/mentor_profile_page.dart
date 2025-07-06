@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
+import 'package:mentor_app/models/chat.dart';
 import 'package:mentor_app/shared/widgets/calendly_embed.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mentor_app/features/mentors/providers/mentor_provider.dart';
 
 import '../../mentors/models/mentor.dart';
 
@@ -37,7 +39,14 @@ class _MentorProfilePageState extends ConsumerState<MentorProfilePage> {
           Center(
             child: CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage(widget.mentor.imageUrl),
+              backgroundImage:
+                  widget.mentor.imageUrl != null
+                      ? NetworkImage(widget.mentor.imageUrl!)
+                      : null,
+              child:
+                  widget.mentor.imageUrl == null
+                      ? const Icon(Icons.person, size: 50)
+                      : null,
             ),
           ),
           const SizedBox(height: 16),
@@ -89,19 +98,48 @@ class _MentorProfilePageState extends ConsumerState<MentorProfilePage> {
               return ElevatedButton(
                 onPressed: () {
                   if (chatExists) {
-                    Navigator.pushNamed(context, '/Chats');
-                  } else {
-                    // Create a new chat and navigate
                     FirebaseFirestore.instance
                         .collection('chats')
                         .doc('chatId_${widget.mentor.id}')
-                        .set({
-                          'mentorId': widget.mentor.id,
-                          'menteeId':
-                              appUser!.uid, // Replace with actual user ID
-                          'timestamp': DateTime.now().millisecondsSinceEpoch,
+                        .get()
+                        .then((doc) {
+                          if (doc.exists) {
+                            final chat = Chat.fromMap(
+                              doc.id,
+                              doc.data() as Map<String, dynamic>,
+                            );
+                            Navigator.pushNamed(
+                              context,
+                              '/ChatDetail',
+                              arguments: chat.chatId,
+                            );
+                          }
                         });
-                    Navigator.pushNamed(context, '/Chats');
+                    Navigator.pushNamed(
+                      context,
+                      '/ChatDetail',
+                      arguments: 'chatId_${widget.mentor.id}',
+                    );
+                  } else {
+                    ref.read(mentorProvider(widget.mentor.id)).whenData((
+                      mentor,
+                    ) {
+                      FirebaseFirestore.instance
+                          .collection('chats')
+                          .doc('chatId_${mentor.id}')
+                          .set({
+                            'mentorId': mentor.id,
+                            'menteeId': appUser!.uid,
+                            'timestamp': DateTime.now().millisecondsSinceEpoch,
+                            'mentor': mentor.toMap(),
+                          });
+                      // navigate to the chat immediately after creating in firestore
+                      Navigator.pushNamed(
+                        context,
+                        '/ChatDetail',
+                        arguments: 'chatId_${mentor.id}',
+                      );
+                    });
                   }
                 },
                 child: Text(

@@ -64,8 +64,12 @@ class AuthService {
   /// Updates the user's profile with selected categories and optional Calendly URL
   Future<void> updateProfileData(
     List<String> categories,
-    String? calendlyUrl,
-  ) async {
+    String? calendlyUrl, {
+    String? bio,
+    String? expertise,
+    String? firstName,
+    String? lastName,
+  }) async {
     final user = _auth.currentUser;
     if (user == null) {
       throw FirebaseAuthException(
@@ -77,6 +81,38 @@ class AuthService {
     if (calendlyUrl != null && calendlyUrl.isNotEmpty) {
       data['calendlyUrl'] = calendlyUrl;
     }
+    if (bio != null && bio.isNotEmpty) {
+      data['bio'] = bio;
+    }
+    if (expertise != null && expertise.isNotEmpty) {
+      data['expertise'] = expertise;
+    }
+    if (firstName != null && firstName.isNotEmpty) {
+      data['firstName'] = firstName;
+    }
+    if (lastName != null && lastName.isNotEmpty) {
+      data['lastName'] = lastName;
+    }
+
     await _firestore.collection('users').doc(user.uid).update(data);
+
+    // Push mentor data to Firestore if the user is a mentor
+    // Fetch the user's role from Firestore to check if they are a mentor
+    final userDoc = await _firestore.collection('users').doc(user.uid).get();
+    final userRole = userDoc.data()?['role'];
+
+    if (userRole == 'mentor') {
+      final mentorData = {
+        'id': user.uid,
+        'email': user.email ?? '',
+        'firstName': firstName,
+        'lastName': lastName,
+        'bio': bio ?? '',
+        'expertise': expertise ?? '',
+        'calendlyUrl': calendlyUrl ?? '',
+        'categories': categories,
+      };
+      await _firestore.collection('mentors').doc(user.uid).set(mentorData);
+    }
   }
 }

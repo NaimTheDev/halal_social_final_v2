@@ -58,11 +58,49 @@ class LoginPage extends HookConsumerWidget {
                 ),
                 onPressed: () async {
                   final authService = ref.read(authServiceProvider);
-                  await authService.login(
-                    emailController.text.trim(),
-                    passwordController.text.trim(),
-                  );
-                  Navigator.of(context).pushReplacementNamed('/Home');
+                  try {
+                    await authService.login(
+                      emailController.text.trim(),
+                      passwordController.text.trim(),
+                    );
+                    Navigator.of(context).pushReplacementNamed('/Home');
+                  } catch (error) {
+                    if (error.toString().contains(
+                      'firebase_auth/invalid-credential',
+                    )) {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Login Error'),
+                              content: const Text(
+                                'The supplied auth credential is incorrect, malformed, or has expired.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Error'),
+                              content: Text(error.toString()),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                      );
+                    }
+                  }
                 },
                 child: const Text('Continue'),
               ),

@@ -126,10 +126,20 @@ class HomePage extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundImage: NetworkImage(mentor.imageUrl),
-                          ),
+                          mentor.imageUrl != null && mentor.imageUrl!.isNotEmpty
+                              ? CircleAvatar(
+                                radius: 24,
+                                backgroundImage: NetworkImage(mentor.imageUrl!),
+                              )
+                              : CircleAvatar(
+                                radius: 24,
+                                backgroundColor: Colors.grey[400],
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 24,
+                                  color: Colors.white,
+                                ),
+                              ),
                           const SizedBox(height: 8),
                           Text(
                             mentor.name,
