@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/mentors/views/browse_mentors_page.dart';
-import '../../auth/controllers/auth_controller.dart';
+import '../../auth/controllers/auth_state_controller.dart';
 import '../../auth/models/app_user.dart';
 // import 'mentor_home_page.dart';
 // import 'mentee_home_page.dart';
@@ -11,21 +11,18 @@ class HomeSelectorPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userAsync = ref.watch(currentUserProvider);
+    final user = ref.watch(currentUserProvider);
 
-    return userAsync.when(
-      data: (user) {
-        if (user == null) return const Text('User not found');
-        switch (user.role) {
-          case UserRole.mentor:
-            return MentorHomePage(ref: ref);
-          case UserRole.mentee:
-            return MenteeHomePage(ref: ref);
-        }
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Error: $e')),
-    );
+    if (user == null) {
+      return const Center(child: Text('User not found'));
+    }
+
+    switch (user.role) {
+      case UserRole.mentor:
+        return MentorHomePage(ref: ref);
+      case UserRole.mentee:
+        return MenteeHomePage(ref: ref);
+    }
   }
 }
 
@@ -42,10 +39,9 @@ class MentorHomePage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-                              final authService = ref.read(authServiceProvider);
-
+              final authService = ref.read(authServiceProvider);
               await authService.signOut();
-             // Navigator.pop(context);
+              // The AppWrapper will automatically handle navigation when auth state changes
             },
           ),
         ],
@@ -68,10 +64,9 @@ class MenteeHomePage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-                              final authService = ref.read(authServiceProvider);
-
+              final authService = ref.read(authServiceProvider);
               await authService.signOut();
-              //Navigator.pop(context);
+              // The AppWrapper will automatically handle navigation when auth state changes
             },
           ),
         ],

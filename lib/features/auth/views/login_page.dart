@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../controllers/auth_controller.dart';
+import '../controllers/auth_state_controller.dart';
+import '../../../core/error/error_handler.dart';
+import '../../../core/navigation/app_router.dart';
 
 class LoginPage extends HookConsumerWidget {
   const LoginPage({super.key});
@@ -10,6 +12,22 @@ class LoginPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
+    final authState = ref.watch(authStateProvider);
+
+    // Handle authentication state changes
+    ref.listen(authStateProvider, (previous, next) {
+      if (next.isAuthenticated) {
+        Navigator.of(context).pushReplacementNamed('/Home');
+      } else if (next.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.error ?? 'Authentication failed'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
@@ -27,12 +45,15 @@ class LoginPage extends HookConsumerWidget {
             TextField(
               controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+              enabled: !authState.isLoading,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: passwordController,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
+              enabled: !authState.isLoading,
             ),
             const SizedBox(height: 12),
             Align(
@@ -56,53 +77,40 @@ class LoginPage extends HookConsumerWidget {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                onPressed: () async {
-                  final authService = ref.read(authServiceProvider);
-                  try {
-                    await authService.login(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
-                    Navigator.of(context).pushReplacementNamed('/Home');
-                  } catch (error) {
-                    if (error.toString().contains(
-                      'firebase_auth/invalid-credential',
-                    )) {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              title: const Text('Login Error'),
-                              content: const Text(
-                                'The supplied auth credential is incorrect, malformed, or has expired.',
+                onPressed:
+                    authState.isLoading
+                        ? null
+                        : () async {
+                          final email = emailController.text.trim();
+                          final password = passwordController.text.trim();
+
+                          if (email.isEmpty || password.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please fill in all fields'),
+                                backgroundColor: Colors.red,
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text('OK'),
-                                ),
-                              ],
+                            );
+                            return;
+                          }
+
+                          await ref
+                              .read(authStateProvider.notifier)
+                              .signIn(email, password);
+                        },
+                child:
+                    authState.isLoading
+                        ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
                             ),
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              title: const Text('Error'),
-                              content: Text(error.toString()),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                      );
-                    }
-                  }
-                },
-                child: const Text('Continue'),
+                          ),
+                        )
+                        : const Text('Continue'),
               ),
             ),
             const SizedBox(height: 20),

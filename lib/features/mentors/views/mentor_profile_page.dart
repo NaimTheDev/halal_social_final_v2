@@ -110,14 +110,14 @@ class _MentorProfilePageState extends ConsumerState<MentorProfilePage> {
                             );
                             Navigator.pushNamed(
                               context,
-                              '/ChatDetail',
+                              '/chat-detail',
                               arguments: chat.chatId,
                             );
                           }
                         });
                     Navigator.pushNamed(
                       context,
-                      '/ChatDetail',
+                      '/chat-detail',
                       arguments: 'chatId_${widget.mentor.id}',
                     );
                   } else {
@@ -136,7 +136,7 @@ class _MentorProfilePageState extends ConsumerState<MentorProfilePage> {
                       // navigate to the chat immediately after creating in firestore
                       Navigator.pushNamed(
                         context,
-                        '/ChatDetail',
+                        '/chat-detail',
                         arguments: 'chatId_${mentor.id}',
                       );
                     });

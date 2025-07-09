@@ -1,71 +1,20 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
-import 'package:mentor_app/features/auth/views/auth_page.dart';
-import 'package:mentor_app/features/auth/views/login_page.dart';
-import 'package:mentor_app/features/auth/views/signup_page.dart';
-import 'package:mentor_app/features/chats/views/chat_detail_page.dart';
-import 'package:mentor_app/features/chats/views/chats_page.dart';
-import 'package:mentor_app/features/home/views/home_selector_page.dart';
-import 'package:mentor_app/features/mentors/views/browse_mentors_page.dart';
-import 'package:mentor_app/features/shell/main_shell_page.dart';
+import 'package:mentor_app/app/app_wrapper.dart';
 import 'package:mentor_app/firebase_options.dart';
-import 'package:mentor_app/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
   if (Firebase.apps.isEmpty) {
-    print('Initializing Firebase...');
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-      name: 'mentor-app',
-    );
-  } else {
-    print('Firebase already initialized.');
-  }
-  runApp(const ProviderScope(child: MyApp()));
-}
-
-class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateChangesProvider);
-    final appUserAsync = ref.watch(currentUserProvider);
-    final appUser = appUserAsync.asData?.value;
-
-    return MaterialApp(
-      title: 'Mentor App',
-      theme: appTheme,
-      home: authState.when(
-        data: (user) {
-          if (user != null) {
-            return const MainShellPage();
-          } else {
-            return const LoginPage();
-          }
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
-      ),
-      routes: {
-        '/Home': (context) => const MainShellPage(),
-        '/login': (context) => const LoginPage(),
-        '/signup': (context) => const SignupPage(),
-        '/Mentor': (context) => const BrowseMentorsPage(),
-        '/auth': (context) => const AuthPage(),
-        '/sign-in': (context) => const LoginPage(),
-        '/Chats': (context) => const ChatsPage(),
-        '/ChatDetail':
-            (context) => ChatDetailPage(
-              chatId: ModalRoute.of(context)!.settings.arguments as String,
-            ),
-      },
     );
   }
+
+  runApp(const ProviderScope(child: AppWrapper()));
 }
 
 class MyHomePage extends StatefulWidget {

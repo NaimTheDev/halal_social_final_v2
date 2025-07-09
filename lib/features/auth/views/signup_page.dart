@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../controllers/auth_controller.dart';
+import '../controllers/auth_state_controller.dart';
 import '../models/app_user.dart';
 import 'package:mentor_app/features/onboarding/onboarding_flow.dart';
 
@@ -17,6 +17,26 @@ class SignupPage extends HookConsumerWidget {
     final confirmPasswordController = useTextEditingController();
     final acceptedTerms = useState(false);
     final isMentor = useState(false);
+    final authState = ref.watch(authStateProvider);
+
+    // Handle authentication state changes
+    ref.listen(authStateProvider, (previous, next) {
+      if (next.isAuthenticated) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => OnboardingFlow(isMentor: isMentor.value),
+          ),
+        );
+      } else if (next.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.error ?? 'Signup failed'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),

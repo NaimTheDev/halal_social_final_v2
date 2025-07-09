@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/auth/models/app_user.dart';
 import 'package:mentor_app/models/calendly_token.dart';
 import 'package:mentor_app/providers/firestore_providers.dart';
-import '../../auth/controllers/auth_controller.dart';
+import '../../auth/controllers/auth_state_controller.dart';
 
 final calendlyTokenDocProvider =
     Provider.family<DocumentReference<CalendlyToken>, String>((ref, userId) {
@@ -41,59 +41,47 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userAsync = ref.watch(currentUserProvider);
+    final user = ref.watch(currentUserProvider);
 
-    return userAsync.when(
-      loading:
-          () =>
-              const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
-      data: (user) {
-        if (user == null) {
-          return const Scaffold(
-            body: Center(child: Text('No user data available.')),
-          );
-        }
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text('No user data available.')),
+      );
+    }
 
-        final isExpert = user.role.name == 'mentor';
-        final calendlyTokenAsync = ref.watch(calendlyTokenProvider(user.uid));
+    // final isExpert = user.role.name == 'mentor';
+    // final calendlyTokenAsync = ref.watch(calendlyTokenProvider(user.uid));
 
-        return Scaffold(
-          appBar: AppBar(title: const Text('Settings')),
-          body: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              _buildUserProfile(user),
-              const SizedBox(height: 24),
-              _buildSectionTitle("Account"),
-              _buildListItem("General"),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          _buildUserProfile(user),
+          const SizedBox(height: 24),
+          _buildSectionTitle("Account"),
+          _buildListItem("General"),
 
-              const Divider(height: 40),
-              _buildSectionTitle("Preferences"),
-              _buildToggleItem("Push Notifications", pushNotificationsEnabled, (
-                value,
-              ) {
-                setState(() {
-                  pushNotificationsEnabled = value;
-                });
-              }),
+          const Divider(height: 40),
+          _buildSectionTitle("Preferences"),
+          _buildToggleItem("Push Notifications", pushNotificationsEnabled, (
+            value,
+          ) {
+            setState(() {
+              pushNotificationsEnabled = value;
+            });
+          }),
 
-              TextButton(
-                onPressed: () async {
-                  final authService = ref.read(authServiceProvider);
-                  await authService.signOut();
-                  Navigator.of(context).pushReplacementNamed('/sign-in');
-                  ref.invalidate(currentUserProvider);
-                },
-                child: const Text(
-                  "Log Out",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
+          TextButton(
+            onPressed: () async {
+              final authService = ref.read(authServiceProvider);
+              await authService.signOut();
+              // The AppWrapper will automatically handle navigation when auth state changes
+            },
+            child: const Text("Log Out", style: TextStyle(color: Colors.black)),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -131,7 +119,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              user.email ?? 'No email available',
+              user.email,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             Text(user.email),

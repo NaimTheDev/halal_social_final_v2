@@ -49,7 +49,7 @@ class _ChatsPageState extends State<ChatsPage> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/Mentor');
+                        Navigator.pushNamed(context, '/mentors');
                       },
                       child: const Text('Start Chatting with a Mentor'),
                     ),
@@ -68,7 +68,7 @@ class _ChatsPageState extends State<ChatsPage> {
                     onTap: () {
                       Navigator.pushNamed(
                         context,
-                        '/ChatDetail',
+                        '/chat-detail',
                         arguments: chat.chatId,
                       );
                     },

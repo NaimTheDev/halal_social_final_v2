@@ -1,91 +1,49 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mentor_app/features/calls/providers/calls_providers.dart';
 import 'package:mentor_app/models/scheduled_call.dart';
 import 'package:mentor_app/shared/widgets/zoom_launch_page.dart';
 
-class CallsPage extends StatelessWidget {
+class CallsPage extends ConsumerWidget {
   const CallsPage({super.key});
 
-  Future<List<ScheduledCall>> _fetchScheduledCalls() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception('User not logged in');
-    }
-
-    final scheduledCallsRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('scheduled_calls');
-
-    final snapshot = await scheduledCallsRef.get();
-    return snapshot.docs
-        .map((doc) => ScheduledCall.fromFirestore(doc.data()))
-        .toList();
-  }
-
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<ScheduledCall>>(
-      future: _fetchScheduledCalls(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final callsAsync = ref.watch(scheduledCallsProvider);
 
-        if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Error loading calls'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Go Back'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Calendar', style: TextStyle(color: Colors.white)),
+          iconTheme: const IconThemeData(color: Colors.white),
+          bottom: const TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: Colors.white,
+            tabs: [Tab(text: 'Upcoming'), Tab(text: 'Past')],
+          ),
+        ),
+        body: callsAsync.when(
+          data: (calls) {
+            final upcomingCalls =
+                calls
+                    .where(
+                      (call) => DateTime.parse(
+                        call.startTime,
+                      ).isAfter(DateTime.now()),
+                    )
+                    .toList();
+            final pastCalls =
+                calls
+                    .where(
+                      (call) => DateTime.parse(
+                        call.startTime,
+                      ).isBefore(DateTime.now()),
+                    )
+                    .toList();
 
-        final calls = snapshot.data ?? [];
-        final upcomingCalls =
-            calls
-                .where(
-                  (call) =>
-                      DateTime.parse(call.startTime).isAfter(DateTime.now()),
-                )
-                .toList();
-        final pastCalls =
-            calls
-                .where(
-                  (call) =>
-                      DateTime.parse(call.startTime).isBefore(DateTime.now()),
-                )
-                .toList();
-
-        return DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text(
-                'Calendar',
-                style: TextStyle(color: Colors.white),
-              ),
-              iconTheme: const IconThemeData(color: Colors.white),
-              bottom: const TabBar(
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white70,
-                indicatorColor: Colors.white,
-                tabs: [Tab(text: 'Upcoming'), Tab(text: 'Past')],
-              ),
-            ),
-            body: TabBarView(
+            return TabBarView(
               children: [
                 _CallsListTab(
                   calls: upcomingCalls,
@@ -93,10 +51,45 @@ class CallsPage extends StatelessWidget {
                 ),
                 _CallsListTab(calls: pastCalls, emptyLabel: 'No past calls'),
               ],
-            ),
-          ),
-        );
-      },
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error:
+              (error, stackTrace) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Error loading calls',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      error.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.invalidate(scheduledCallsProvider);
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+        ),
+      ),
     );
   }
 }
@@ -142,7 +135,7 @@ class AppointmentCard extends StatelessWidget {
                       '${startTime.toLocal().year}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    // Start time -> End time
+                    // Start time → End time
                     Text(
                       '${TimeOfDay.fromDateTime(startTime.toLocal()).format(context)}'
                       ' → '
