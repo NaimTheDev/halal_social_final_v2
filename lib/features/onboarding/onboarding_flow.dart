@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../shell/main_shell_page.dart';
 
 class OnboardingFlow extends ConsumerStatefulWidget {
   final bool isMentor;
@@ -145,7 +146,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
     // Invalidate currentUserProvider to refresh user data
     ref.invalidate(currentUserProvider);
 
-    Navigator.of(context).pushReplacementNamed('/Home');
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const MainShellPage()),
+    );
   }
 
   Widget _buildCategoriesPage() {
@@ -210,7 +213,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                             });
                           },
                           backgroundColor: Colors.white,
-                          selectedColor: const Color(0xFF16A085),
+                          selectedColor: const Color(0xFF2C3E50),
                           checkmarkColor: Colors.white,
                           elevation: 0,
                           pressElevation: 0,
@@ -219,7 +222,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                             side: BorderSide(
                               color:
                                   isSelected
-                                      ? const Color(0xFF16A085)
+                                      ? const Color(0xFF2C3E50)
                                       : Colors.grey[300]!,
                             ),
                           ),
@@ -262,12 +265,12 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF16A085).withOpacity(0.1),
+                    color: const Color(0xFF2C3E50).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.info_outline,
-                    color: Color(0xFF16A085),
+                    color: Color(0xFF2C3E50),
                     size: 20,
                   ),
                 ),
@@ -307,7 +310,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             keyboardType: TextInputType.url,
             suffixIcon: const Icon(
               Icons.calendar_today,
-              color: Color(0xFF16A085),
+              color: Color(0xFF2C3E50),
             ),
           ),
           const SizedBox(height: 40),
@@ -502,8 +505,8 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             color: Color(0xFF2C3E50),
           ),
         ),
-        backgroundColor: const Color(0xFF16A085).withOpacity(0.1),
-        side: const BorderSide(color: Color(0xFF16A085), width: 1),
+        backgroundColor: const Color(0xFF2C3E50).withOpacity(0.1),
+        side: const BorderSide(color: Color(0xFF2C3E50), width: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
@@ -552,7 +555,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0xFF16A085),
+                  color: Color(0xFF2C3E50),
                   width: 2,
                 ),
               ),
@@ -589,9 +592,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               decoration: BoxDecoration(
                 color:
                     isCurrent
-                        ? const Color(0xFF16A085)
+                        ? const Color(0xFF2C3E50)
                         : isActive
-                        ? const Color(0xFF16A085).withOpacity(0.6)
+                        ? const Color(0xFF2C3E50).withOpacity(0.6)
                         : Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -652,7 +655,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                 onPressed: onPrevious,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: const BorderSide(color: Color(0xFF16A085)),
+                  side: const BorderSide(color: Color(0xFF2C3E50)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -662,7 +665,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF16A085),
+                    color: Color(0xFF2C3E50),
                   ),
                 ),
               ),
@@ -674,7 +677,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             child: ElevatedButton(
               onPressed: isNextEnabled ? onNext : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF16A085),
+                backgroundColor: const Color(0xFF2C3E50),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
