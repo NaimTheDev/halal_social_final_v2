@@ -12,7 +12,21 @@ class OnboardingFlow extends ConsumerStatefulWidget {
   _OnboardingFlowState createState() => _OnboardingFlowState();
 }
 
-class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
+class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  final PageController _pageController = PageController();
+
+  // Text controllers for better input handling
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _expertiseController = TextEditingController();
+  final TextEditingController _calendlyController = TextEditingController();
+
   final List<String> _allCategories = [
     'Addiction',
     'Advisory',
@@ -59,24 +73,37 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
     'YouTube Creator',
   ];
   final List<String> _selectedCategories = [];
-  String? _calendlyUrl;
   int _currentPage = 0;
-
-  String? _bio;
-  String? _expertise;
-
-  String? _firstName;
-  String? _lastName;
 
   int get _totalPages => widget.isMentor ? 4 : 2;
 
   void _nextPage() {
     if (_currentPage < _totalPages - 1) {
+      _animationController.reset();
+      _animationController.forward();
       setState(() {
         _currentPage++;
       });
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     } else {
       _finish();
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 0) {
+      _animationController.reset();
+      _animationController.forward();
+      setState(() {
+        _currentPage--;
+      });
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
@@ -87,23 +114,26 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
     // Update profile data and navigate to home
     await authService.updateProfileData(
       _selectedCategories,
-      _calendlyUrl,
-      bio: widget.isMentor ? _bio : null,
-      expertise: widget.isMentor ? _expertise : null,
-      firstName: _firstName,
-      lastName: _lastName,
+      _calendlyController.text.trim().isEmpty
+          ? null
+          : _calendlyController.text.trim(),
+      bio: widget.isMentor ? _bioController.text.trim() : null,
+      expertise: widget.isMentor ? _expertiseController.text.trim() : null,
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
     );
 
     if (widget.isMentor) {
       final currentUser = await authService.getCurrentUserData();
       final mentorData = {
         'email': currentUser?.email ?? '',
-        'name': "$_firstName $_lastName",
-        'firstName': _firstName,
-        'lastName': _lastName,
-        'bio': _bio ?? '',
-        'expertise': _expertise ?? '',
-        'calendlyUrl': _calendlyUrl ?? '',
+        'name':
+            "${_firstNameController.text.trim()} ${_lastNameController.text.trim()}",
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'bio': _bioController.text.trim(),
+        'expertise': _expertiseController.text.trim(),
+        'calendlyUrl': _calendlyController.text.trim(),
         'categories': _selectedCategories,
       };
       await firestore
@@ -119,195 +149,637 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow> {
   }
 
   Widget _buildCategoriesPage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          widget.isMentor ? 'Select your expertise' : 'Select your interests',
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children:
-              _allCategories.map((category) {
-                final isSelected = _selectedCategories.contains(category);
-                return FilterChip(
-                  label: Text(category),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedCategories.add(category);
-                      } else {
-                        _selectedCategories.remove(category);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-        ),
-        const Spacer(),
-        ElevatedButton(
-          onPressed: _selectedCategories.isEmpty ? null : _nextPage,
-          child: const Text('Next'),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPageHeader(
+            widget.isMentor ? 'Select your expertise' : 'Choose your interests',
+            widget.isMentor
+                ? 'What areas can you mentor others in?'
+                : 'What topics are you interested in learning about?',
+          ),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Selected (${_selectedCategories.length})',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2C3E50),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children:
+                      _allCategories.map((category) {
+                        final isSelected = _selectedCategories.contains(
+                          category,
+                        );
+                        return FilterChip(
+                          label: Text(
+                            category,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color:
+                                  isSelected
+                                      ? Colors.white
+                                      : const Color(0xFF2C3E50),
+                            ),
+                          ),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedCategories.add(category);
+                              } else {
+                                _selectedCategories.remove(category);
+                              }
+                            });
+                          },
+                          backgroundColor: Colors.white,
+                          selectedColor: const Color(0xFF16A085),
+                          checkmarkColor: Colors.white,
+                          elevation: 0,
+                          pressElevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                              color:
+                                  isSelected
+                                      ? const Color(0xFF16A085)
+                                      : Colors.grey[300]!,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 40),
+          _buildActionButtons(
+            onNext: _nextPage,
+            onPrevious: _previousPage,
+            isNextEnabled: _selectedCategories.isNotEmpty,
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildMentorPage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text(
-          'Your Calendly URL (optional)',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          decoration: const InputDecoration(
-            labelText: 'Calendly URL',
-            border: OutlineInputBorder(),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPageHeader(
+            'Almost done!',
+            'Add your Calendly URL to let mentees schedule calls with you (optional)',
           ),
-          onChanged: (value) => _calendlyUrl = value,
-        ),
-        const Spacer(),
-        ElevatedButton(onPressed: _nextPage, child: const Text('Next')),
-      ],
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F9FA),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE9ECEF)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF16A085).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.info_outline,
+                    color: Color(0xFF16A085),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Why add Calendly?',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2C3E50),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Mentees can easily schedule calls with you through your Calendly link. You can always add this later in your profile.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildStyledTextField(
+            label: 'Calendly URL',
+            hint: 'https://calendly.com/your-username',
+            controller: _calendlyController,
+            keyboardType: TextInputType.url,
+            suffixIcon: const Icon(
+              Icons.calendar_today,
+              color: Color(0xFF16A085),
+            ),
+          ),
+          const SizedBox(height: 40),
+          _buildActionButtons(onNext: _nextPage, onPrevious: _previousPage),
+        ],
+      ),
     );
   }
 
   Widget _buildBioAndExpertisePage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text(
-          'Tell us about yourself',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          decoration: const InputDecoration(
-            labelText: 'Bio',
-            border: OutlineInputBorder(),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPageHeader(
+            'Tell us about yourself',
+            'Share your background and expertise to help mentees find you',
           ),
-          onChanged: (value) => _bio = value,
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          decoration: const InputDecoration(
-            labelText: 'Expertise',
-            border: OutlineInputBorder(),
+          const SizedBox(height: 20),
+          _buildStyledTextField(
+            label: 'Bio',
+            hint:
+                'Write a brief description about yourself, your experience, and your passion for mentoring...',
+            controller: _bioController,
+            maxLines: 4,
           ),
-          onChanged: (value) => _expertise = value,
-        ),
-        const Spacer(),
-        ElevatedButton(onPressed: _nextPage, child: const Text('Next')),
-      ],
+          _buildStyledTextField(
+            label: 'Expertise',
+            hint: 'What specific skills or knowledge do you excel in?',
+            controller: _expertiseController,
+          ),
+          const SizedBox(height: 40),
+          _buildActionButtons(
+            onNext: _nextPage,
+            onPrevious: _previousPage,
+            isNextEnabled:
+                _bioController.text.isNotEmpty &&
+                _expertiseController.text.isNotEmpty,
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildNamePage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text(
-          'Enter your name',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          decoration: const InputDecoration(
-            labelText: 'First Name',
-            border: OutlineInputBorder(),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPageHeader(
+            'Welcome! Let\'s get started',
+            'Please enter your name to personalize your experience',
           ),
-          onChanged: (value) => _firstName = value,
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          decoration: const InputDecoration(
-            labelText: 'Last Name',
-            border: OutlineInputBorder(),
+          const SizedBox(height: 20),
+          _buildStyledTextField(
+            label: 'First Name',
+            hint: 'Enter your first name',
+            controller: _firstNameController,
           ),
-          onChanged: (value) => _lastName = value,
-        ),
-        const Spacer(),
-        ElevatedButton(onPressed: _nextPage, child: const Text('Next')),
-      ],
+          _buildStyledTextField(
+            label: 'Last Name',
+            hint: 'Enter your last name',
+            controller: _lastNameController,
+          ),
+          const SizedBox(height: 40),
+          _buildActionButtons(
+            onNext: _nextPage,
+            isNextEnabled:
+                _firstNameController.text.isNotEmpty &&
+                _lastNameController.text.isNotEmpty,
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildSummaryPage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text(
-          'Summary',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Selected Categories:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-        ),
-        ..._selectedCategories.map((cat) => ListTile(title: Text(cat))),
-        if (widget.isMentor && (_calendlyUrl?.isNotEmpty ?? false)) ...[
-          const SizedBox(height: 16),
-          const Text(
-            'Calendly URL:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPageHeader(
+            'Review your information',
+            'Take a moment to review everything looks correct before finishing',
           ),
-          ListTile(title: Text(_calendlyUrl!)),
+          const SizedBox(height: 20),
+          _buildSummaryCard('Personal Information', [
+            _buildSummaryItem('First Name', _firstNameController.text),
+            _buildSummaryItem('Last Name', _lastNameController.text),
+          ]),
+          const SizedBox(height: 16),
+          _buildSummaryCard(
+            widget.isMentor ? 'Expertise Areas' : 'Interests',
+            _selectedCategories
+                .map((category) => _buildSummaryChip(category))
+                .toList(),
+          ),
+          if (widget.isMentor && _calendlyController.text.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _buildSummaryCard('Calendly URL', [
+              _buildSummaryItem('URL', _calendlyController.text),
+            ]),
+          ],
+          if (widget.isMentor) ...[
+            const SizedBox(height: 16),
+            _buildSummaryCard('About You', [
+              _buildSummaryItem('Bio', _bioController.text),
+              _buildSummaryItem('Expertise', _expertiseController.text),
+            ]),
+          ],
+          const SizedBox(height: 40),
+          _buildActionButtons(
+            onNext: _finish,
+            onPrevious: _previousPage,
+            nextText: 'Complete Setup',
+          ),
         ],
-        if (widget.isMentor) ...[
-          const SizedBox(height: 16),
-          const Text(
-            'Bio:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard(String title, List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-          ListTile(title: Text(_bio ?? '')),
-          const SizedBox(height: 16),
-          const Text(
-            'Expertise:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          ),
-          ListTile(title: Text(_expertise ?? '')),
         ],
-        const Spacer(),
-        ElevatedButton(onPressed: _finish, child: const Text('Finish')),
-      ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2C3E50),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryItem(String label, String value) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value.isEmpty ? 'Not provided' : value,
+            style: TextStyle(
+              fontSize: 16,
+              color: value.isEmpty ? Colors.grey[400] : const Color(0xFF2C3E50),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryChip(String category) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8, bottom: 8),
+      child: Chip(
+        label: Text(
+          category,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF2C3E50),
+          ),
+        ),
+        backgroundColor: const Color(0xFF16A085).withOpacity(0.1),
+        side: const BorderSide(color: Color(0xFF16A085), width: 1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  Widget _buildStyledTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+    Widget? suffixIcon,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF2C3E50),
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            style: const TextStyle(fontSize: 16),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 16),
+              filled: true,
+              fillColor: Colors.grey[50],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFF16A085),
+                  width: 2,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFE74C3C),
+                  width: 2,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+              suffixIcon: suffixIcon,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressIndicator() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        children: List.generate(_totalPages, (index) {
+          final isActive = index <= _currentPage;
+          final isCurrent = index == _currentPage;
+          return Expanded(
+            child: Container(
+              height: 4,
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              decoration: BoxDecoration(
+                color:
+                    isCurrent
+                        ? const Color(0xFF16A085)
+                        : isActive
+                        ? const Color(0xFF16A085).withOpacity(0.6)
+                        : Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildPageHeader(String title, String subtitle) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2C3E50),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons({
+    required VoidCallback onNext,
+    VoidCallback? onPrevious,
+    String nextText = 'Next',
+    bool isNextEnabled = true,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        children: [
+          if (onPrevious != null) ...[
+            Expanded(
+              child: OutlinedButton(
+                onPressed: onPrevious,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: const BorderSide(color: Color(0xFF16A085)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Previous',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF16A085),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+          ],
+          Expanded(
+            flex: onPrevious != null ? 1 : 2,
+            child: ElevatedButton(
+              onPressed: isNextEnabled ? onNext : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF16A085),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                nextText,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(1.0, 0.0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+
+    // Add listeners to text controllers to trigger rebuilds
+    _firstNameController.addListener(() => setState(() {}));
+    _lastNameController.addListener(() => setState(() {}));
+    _bioController.addListener(() => setState(() {}));
+    _expertiseController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _pageController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _bioController.dispose();
+    _expertiseController.dispose();
+    _calendlyController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Widget body;
-    switch (_currentPage) {
-      case 0:
-        body = _buildNamePage();
-        break;
-      case 1:
-        body = _buildCategoriesPage();
-        break;
-      case 2:
-        body =
-            widget.isMentor ? _buildBioAndExpertisePage() : _buildSummaryPage();
-        break;
-      case 3:
-        body = widget.isMentor ? _buildMentorPage() : _buildSummaryPage();
-        break;
-      case 4:
-        body = _buildSummaryPage();
-        break;
-      default:
-        body = const SizedBox.shrink();
+    List<Widget> pages = [_buildNamePage(), _buildCategoriesPage()];
+
+    if (widget.isMentor) {
+      pages.add(_buildBioAndExpertisePage());
+      pages.add(_buildMentorPage());
     }
 
+    pages.add(_buildSummaryPage());
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Onboarding')),
-      body: Padding(padding: const EdgeInsets.all(16.0), child: body),
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Setup Profile',
+          style: TextStyle(
+            color: Color(0xFF2C3E50),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading:
+            _currentPage > 0
+                ? IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFF2C3E50)),
+                  onPressed: _previousPage,
+                )
+                : null,
+      ),
+      body: Column(
+        children: [
+          _buildProgressIndicator(),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: pages,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
