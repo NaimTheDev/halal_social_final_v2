@@ -115,4 +115,67 @@ class AuthService {
       await _firestore.collection('mentors').doc(user.uid).set(mentorData);
     }
   }
+
+  /// Updates the user's profile image URL
+  Future<void> updateProfileImage(String imageUrl) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-current-user',
+        message: 'No authenticated user to update profile for.',
+      );
+    }
+
+    await _firestore.collection('users').doc(user.uid).update({
+      'imageUrl': imageUrl,
+    });
+
+    // Also update mentor collection if user is a mentor
+    final userDoc = await _firestore.collection('users').doc(user.uid).get();
+    final userRole = userDoc.data()?['role'];
+
+    if (userRole == 'mentor') {
+      await _firestore.collection('mentors').doc(user.uid).update({
+        'imageUrl': imageUrl,
+      });
+    }
+  }
+
+  /// Updates mentor's Calendly information
+  Future<void> updateMentorCalendlyInfo({
+    String? calendlyUrl,
+    String? calendlyOrgId,
+    String? calendlyPAT,
+    String? calendlyUserUri,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-current-user',
+        message: 'No authenticated user to update profile for.',
+      );
+    }
+
+    // Check if user is a mentor
+    final userDoc = await _firestore.collection('users').doc(user.uid).get();
+    final userRole = userDoc.data()?['role'];
+
+    if (userRole != 'mentor') {
+      throw FirebaseAuthException(
+        code: 'not-a-mentor',
+        message: 'Only mentors can update Calendly information.',
+      );
+    }
+
+    final mentorData = <String, dynamic>{};
+    if (calendlyUrl != null) mentorData['calendlyUrl'] = calendlyUrl;
+    if (calendlyOrgId != null) mentorData['calendlyOrgId'] = calendlyOrgId;
+    if (calendlyPAT != null) mentorData['calendlyPAT'] = calendlyPAT;
+    if (calendlyUserUri != null)
+      mentorData['calendlyUserUri'] = calendlyUserUri;
+
+    if (mentorData.isNotEmpty) {
+      await _firestore.collection('mentors').doc(user.uid).update(mentorData);
+    }
+  }
 }

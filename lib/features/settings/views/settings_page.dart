@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mentor_app/features/auth/models/app_user.dart';
 import 'package:mentor_app/models/calendly_token.dart';
+import 'package:mentor_app/core/providers/app_providers.dart' as app_providers;
 import 'package:mentor_app/providers/firestore_providers.dart';
 import '../../auth/controllers/auth_state_controller.dart';
 
@@ -38,6 +40,15 @@ class SettingsPage extends ConsumerStatefulWidget {
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool pushNotificationsEnabled = true;
+  final TextEditingController _calendlyUrlController = TextEditingController();
+  bool _isUpdatingImage = false;
+  bool _isUpdatingCalendly = false;
+
+  @override
+  void dispose() {
+    _calendlyUrlController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +60,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       );
     }
 
-    // final isExpert = user.role.name == 'mentor';
-    // final calendlyTokenAsync = ref.watch(calendlyTokenProvider(user.uid));
+    final isExpert = user.role.name == 'mentor';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
@@ -60,17 +70,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           _buildUserProfile(user),
           const SizedBox(height: 24),
           _buildSectionTitle("Account"),
-          _buildListItem("General"),
+          const SizedBox(height: 16),
+
+          // Profile Picture Section
+          _buildProfilePictureSection(user),
+          const SizedBox(height: 16),
+
+          // Calendly URL Section (only for mentors)
+          if (isExpert) ...[
+            _buildCalendlySection(user),
+            const SizedBox(height: 16),
+          ],
 
           const Divider(height: 40),
-          _buildSectionTitle("Preferences"),
-          _buildToggleItem("Push Notifications", pushNotificationsEnabled, (
-            value,
-          ) {
-            setState(() {
-              pushNotificationsEnabled = value;
-            });
-          }),
 
           TextButton(
             onPressed: () async {
@@ -88,15 +100,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget _buildUserProfile(AppUser user) {
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: 64,
-            height: 64,
-
-            child: Column(
-              children: [
-                CachedNetworkImage(
+        Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 64,
+                height: 64,
+                child: CachedNetworkImage(
                   imageUrl: user.imageUrl ?? '',
                   fit: BoxFit.cover,
                   errorWidget:
@@ -107,48 +118,228 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                   placeholder:
                       (context, url) => const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: Icon(Icons.person, size: 32, color: Colors.grey),
                       ),
                 ),
-              ],
+              ),
             ),
-          ),
+            if (_isUpdatingImage)
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+          ],
         ),
         const SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              user.email,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            Text(user.email),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user.email,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(user.email),
+              Text(
+                'Role: ${user.role.name}',
+                style: TextStyle(
+                  color:
+                      user.role.name == 'mentor' ? Colors.blue : Colors.green,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
+  }
+
+  Widget _buildProfilePictureSection(AppUser user) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Profile Picture',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Update your profile picture',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed:
+                      _isUpdatingImage
+                          ? null
+                          : () => _updateProfileImage(ImageSource.camera),
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Camera'),
+                ),
+                ElevatedButton.icon(
+                  onPressed:
+                      _isUpdatingImage
+                          ? null
+                          : () => _updateProfileImage(ImageSource.gallery),
+                  icon: const Icon(Icons.photo_library),
+                  label: const Text('Gallery'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCalendlySection(AppUser user) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Calendly Integration',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Add your Calendly URL to allow mentees to book sessions',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _calendlyUrlController,
+              decoration: const InputDecoration(
+                labelText: 'Calendly URL',
+                hintText: 'https://calendly.com/your-username',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isUpdatingCalendly ? null : _updateCalendlyUrl,
+                child:
+                    _isUpdatingCalendly
+                        ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                        : const Text('Update Calendly URL'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _updateProfileImage(ImageSource source) async {
+    try {
+      setState(() => _isUpdatingImage = true);
+
+      final storageService = ref.read(app_providers.storageServiceProvider);
+      final authService = ref.read(authServiceProvider);
+      final user = ref.read(currentUserProvider);
+
+      if (user == null) return;
+
+      final imageFile = await storageService.pickImage(source: source);
+      if (imageFile == null) return;
+
+      final imageUrl = await storageService.uploadProfileImage(
+        user.uid,
+        imageFile,
+      );
+      await authService.updateProfileImage(imageUrl);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profile picture updated successfully!'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating profile picture: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUpdatingImage = false);
+      }
+    }
+  }
+
+  Future<void> _updateCalendlyUrl() async {
+    final url = _calendlyUrlController.text.trim();
+    if (url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a Calendly URL')),
+      );
+      return;
+    }
+
+    if (!url.startsWith('https://calendly.com/')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid Calendly URL')),
+      );
+      return;
+    }
+
+    try {
+      setState(() => _isUpdatingCalendly = true);
+
+      final authService = ref.read(authServiceProvider);
+      await authService.updateMentorCalendlyInfo(calendlyUrl: url);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Calendly URL updated successfully!')),
+        );
+        _calendlyUrlController.clear();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating Calendly URL: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUpdatingCalendly = false);
+      }
+    }
   }
 
   Widget _buildSectionTitle(String title) => Text(
     title,
     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
   );
-
-  Widget _buildListItem(String title) => ListTile(
-    title: Text(title),
-    trailing: const Icon(Icons.chevron_right),
-    onTap: () {},
-  );
-
-  Widget _buildToggleItem(
-    String title,
-    bool value,
-    void Function(bool) onChanged,
-  ) {
-    return SwitchListTile(
-      title: Text(title),
-      value: value,
-      onChanged: onChanged,
-    );
-  }
 }

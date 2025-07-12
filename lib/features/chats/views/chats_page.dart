@@ -1,36 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mentor_app/features/chats/providers/chat_providers.dart';
 import 'package:mentor_app/models/chat.dart';
 
-class ChatsPage extends StatefulWidget {
+class ChatsPage extends ConsumerStatefulWidget {
   const ChatsPage({super.key});
 
   @override
-  State<ChatsPage> createState() => _ChatsPageState();
+  ConsumerState<ChatsPage> createState() => _ChatsPageState();
 }
 
-class _ChatsPageState extends State<ChatsPage> {
-  final CollectionReference _chatCollection = FirebaseFirestore.instance
-      .collection('chats');
-  List<Chat> _activeChats = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchActiveChats();
-  }
-
-  void _fetchActiveChats() {
-    _chatCollection.snapshots().listen((snapshot) {
-      setState(() {
-        _activeChats =
-            snapshot.docs.map((doc) {
-              return Chat.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-            }).toList();
-      });
-    });
-  }
-
+class _ChatsPageState extends ConsumerState<ChatsPage> {
   String _formatTime(int timestamp) {
     final now = DateTime.now();
     final messageTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
@@ -49,6 +29,8 @@ class _ChatsPageState extends State<ChatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final activeChatsAsync = ref.watch(activeChatsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Messages'),
@@ -57,17 +39,40 @@ class _ChatsPageState extends State<ChatsPage> {
         elevation: 0,
       ),
       backgroundColor: Colors.grey[50],
-      body:
-          _activeChats.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: _activeChats.length,
-                itemBuilder: (context, index) {
-                  final chat = _activeChats[index];
-                  return _buildChatTile(chat);
-                },
+      body: activeChatsAsync.when(
+        data:
+            (chats) =>
+                chats.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: chats.length,
+                      itemBuilder: (context, index) {
+                        final chat = chats[index];
+                        return _buildChatTile(chat);
+                      },
+                    ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error:
+            (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 60, color: Colors.red[300]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error loading chats',
+                    style: TextStyle(fontSize: 18, color: Colors.red[700]),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please try again later',
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  ),
+                ],
               ),
+            ),
+      ),
     );
   }
 

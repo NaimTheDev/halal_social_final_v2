@@ -38,5 +38,8 @@ class AppUser {
     'email': email,
     'role': role.name,
     'name': (firstName ?? '') + (lastName ?? ''),
+    'imageUrl': imageUrl,
+    'firstName': firstName,
+    'lastName': lastName,
   };
 }

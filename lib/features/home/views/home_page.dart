@@ -23,7 +23,6 @@ class HomePage extends ConsumerWidget {
             SliverToBoxAdapter(child: _buildGreeting(context, ref)),
             SliverToBoxAdapter(child: _buildQuickStats(context, ref)),
             SliverToBoxAdapter(child: _buildRecentActivity(context, ref)),
-            SliverToBoxAdapter(child: _buildCategoryChips()),
             SliverToBoxAdapter(
               child: _buildSectionHeader(
                 'Featured Mentors',
@@ -125,19 +124,6 @@ class HomePage extends ConsumerWidget {
                   context,
                   MaterialPageRoute(builder: (_) => const ChatsPage()),
                 );
-              },
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              context,
-              'Categories',
-              '4', // Based on current category count
-              Icons.category,
-              Colors.orange,
-              onTap: () {
-                // Navigate to categories page
               },
             ),
           ),
@@ -518,18 +504,6 @@ class HomePage extends ConsumerWidget {
                       context,
                       MaterialPageRoute(builder: (_) => const ChatsPage()),
                     );
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionButton(
-                  context,
-                  'Explore Categories',
-                  Icons.category,
-                  Colors.purple,
-                  () {
-                    // Navigate to categories page
                   },
                 ),
               ),

@@ -5,6 +5,9 @@ class Mentor {
   final String expertise;
   final String? imageUrl;
   final String? calendlyUrl;
+  final String? calendlyOrgId;
+  final String? calendlyPAT;
+  final String? calendlyUserUri;
   final List<String>? categories;
   final String? firstName;
   final String? lastName;
@@ -16,6 +19,9 @@ class Mentor {
     required this.expertise,
     required this.imageUrl,
     this.calendlyUrl,
+    this.calendlyOrgId,
+    this.calendlyPAT,
+    this.calendlyUserUri,
     this.categories,
     this.firstName,
     this.lastName,
@@ -29,6 +35,9 @@ class Mentor {
       expertise: data['expertise'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
       calendlyUrl: data['calendlyUrl'],
+      calendlyOrgId: data['calendlyOrgId'],
+      calendlyPAT: data['calendlyPAT'],
+      calendlyUserUri: data['calendlyUserUri'],
       categories:
           (data['categories'] as List<dynamic>?)
               ?.map((cat) => cat.toString())
@@ -49,6 +58,9 @@ class Mentor {
       expertise: json['expertise'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
       calendlyUrl: json['calendlyUrl'],
+      calendlyOrgId: json['calendlyOrgId'],
+      calendlyPAT: json['calendlyPAT'],
+      calendlyUserUri: json['calendlyUserUri'],
       categories:
           (json['categories'] as List<dynamic>?)
               ?.map((cat) => cat.toString())
@@ -66,6 +78,9 @@ class Mentor {
       'expertise': expertise,
       'imageUrl': imageUrl,
       'calendlyUrl': calendlyUrl,
+      'calendlyOrgId': calendlyOrgId,
+      'calendlyPAT': calendlyPAT,
+      'calendlyUserUri': calendlyUserUri,
       'categories': categories,
       'firstName': firstName,
       'lastName': lastName,
