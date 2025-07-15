@@ -1,10 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/app_user.dart';
+import '../controllers/auth_controller.dart';
+import '../../mentors/controllers/mentor_state_controller.dart';
+import '../../chats/providers/chat_providers.dart';
+import '../../calls/providers/calls_providers.dart';
+import '../../../core/providers/app_providers.dart';
 
 class AuthService {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final Ref? _ref;
+
+  AuthService([this._ref]);
 
   Future<void> signUp(String email, String password, UserRole role) async {
     try {
@@ -48,10 +57,44 @@ class AuthService {
 
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
+  /// Comprehensive sign out functionality that clears all user-related state
+  /// Similar to the pattern used in other projects for proper cleanup
   Future<void> signOut() async {
     try {
+      // Clear any user-specific state providers if ref is available
+      if (_ref != null) {
+        // Invalidate user-related providers to clear cached data
+        _ref.invalidate(currentUserProvider);
+        _ref.invalidate(authStateChangesProvider);
+
+        // Clear mentor-related state
+        try {
+          final mentorStateController = _ref.read(mentorStateProvider.notifier);
+          mentorStateController.clearState();
+        } catch (e) {
+          // Provider might not be initialized, continue
+        }
+
+        // Clear chats state
+        _ref.invalidate(activeChatsProvider);
+
+        // Clear calls state
+        _ref.invalidate(scheduledCallsProvider);
+
+        // Clear any cached user data
+        try {
+          // Clear any specific providers that cache user data
+          _ref.invalidate(appInitializationProvider);
+        } catch (e) {
+          // Provider might not be initialized, continue
+        }
+      }
+
+      // Sign out from Firebase
       await _auth.signOut();
-      print('User signed out successfully'); // Debugging log
+      print(
+        'User signed out successfully - all state cleared',
+      ); // Debugging log
     } catch (e) {
       print('Error during sign out: ${e.toString()}'); // Debugging log
       throw FirebaseAuthException(

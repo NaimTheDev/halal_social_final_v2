@@ -39,9 +39,22 @@ class MentorHomePage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              final authService = ref.read(authServiceProvider);
-              await authService.signOut();
-              // The AppWrapper will automatically handle navigation when auth state changes
+              try {
+                final authService = ref.read(authServiceProvider);
+                await authService.signOut();
+                // The AppWrapper will automatically handle navigation when auth state changes
+              } catch (e) {
+                // Show error message
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error logging out: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
             },
           ),
         ],
@@ -64,9 +77,22 @@ class MenteeHomePage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              final authService = ref.read(authServiceProvider);
-              await authService.signOut();
-              // The AppWrapper will automatically handle navigation when auth state changes
+              try {
+                final authService = ref.read(authServiceProvider);
+                await authService.signOut();
+                // The AppWrapper will automatically handle navigation when auth state changes
+              } catch (e) {
+                // Show error message
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error logging out: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
             },
           ),
         ],

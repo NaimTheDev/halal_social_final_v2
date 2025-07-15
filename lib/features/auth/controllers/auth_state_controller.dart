@@ -126,7 +126,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 }
 
 /// Auth service provider
-final authServiceProvider = Provider<AuthService>((ref) => AuthService());
+final authServiceProvider = Provider<AuthService>((ref) => AuthService(ref));
 
 /// Auth state provider
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((

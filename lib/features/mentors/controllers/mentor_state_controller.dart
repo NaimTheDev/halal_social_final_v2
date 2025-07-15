@@ -71,6 +71,10 @@ class MentorStateNotifier extends StateNotifier<MentorState> {
     state = state.copyWith(error: null);
   }
 
+  void clearState() {
+    state = const MentorState();
+  }
+
   List<Mentor> get filteredMentors {
     List<Mentor> filteredList = state.mentors;
 
