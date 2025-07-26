@@ -17,22 +17,27 @@ Halal Social is dedicated to creating a safe, Islamic-compliant platform where M
 ### 🏠 Home Dashboard
 *Main navigation and dashboard overview*
 
-![Home Dashboard](image1)
+
+<img width="547" height="886" alt="Screenshot 2025-07-13 at 10 52 31 AM" src="https://github.com/user-attachments/assets/08690aa7-299f-4519-9715-64912ca74f3c" />
+
 
 ### 👥 Browse Mentors  
 *Discover and filter mentors by expertise and categories*
 
-![Browse Mentors Screen](image4)
+<img width="550" height="883" alt="Screenshot 2025-07-13 at 10 53 13 AM" src="https://github.com/user-attachments/assets/21a81dab-5363-4b8d-9a0d-07556785e1e7" />
+
 
 ### 💬 Chat Interface
 *Real-time messaging between mentors and mentees*
 
-![Chat Interface](image3)
+<img width="548" height="891" alt="Screenshot 2025-07-13 at 10 52 50 AM" src="https://github.com/user-attachments/assets/602ffa79-bff0-4c4a-89c0-886aeb8b8cea" />
+
 
 ### ⚙️ User Settings
 *Profile management and app configuration*
 
-![User Settings](image2)
+<img width="544" height="888" alt="Screenshot 2025-07-13 at 10 52 40 AM" src="https://github.com/user-attachments/assets/7e03ca9c-2b24-40fb-bba1-980edee64196" />
+
 
 ## ✨ Key Features
 
