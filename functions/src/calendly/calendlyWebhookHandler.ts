@@ -1,7 +1,6 @@
-// functions/src/calendly/calendlyWebhookHandler.ts
 import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
-import express from "express";
+import admin from "firebase-admin";
+import express, { Request, Response } from "express";
 
 // Initialize Firebase Admin SDK
 admin.initializeApp();
@@ -9,7 +8,6 @@ const db = admin.firestore();
 
 // Express app to capture raw JSON payload
 const app = express();
-// eslint-disable-next-line object-curly-spacing
 app.use(express.raw({ type: "application/json" }));
 
 // Define the CallData interface
@@ -29,7 +27,7 @@ interface CallData {
   payment: unknown | null;
   no_show: unknown | null;
   reconfirmation: unknown | null;
-  createdAt: FirebaseFirestore.FieldValue;
+  createdAt: admin.firestore.FieldValue;
   joinUrl: string | null;
 }
 
@@ -45,7 +43,7 @@ interface CallData {
 //         "TYPE": "ZOOM"
 //       }
 
-app.post("/", async (req, res) => {
+app.post("/", async (req: Request, res: Response) => {
   // 1️⃣ Bypass signature for now (insecure)
 
   // 2️⃣ Capture raw JSON string from bodyParser verify
@@ -53,7 +51,6 @@ app.post("/", async (req, res) => {
 
   // Directly save the request body to the scheduled_calls collection
   try {
-    // eslint-disable-next-line object-curly-spacing
     const { payload: p } = body;
     functions.logger.info(
       "WEBHOOK BODY: " + JSON.stringify(body).toUpperCase()
@@ -90,7 +87,6 @@ app.post("/", async (req, res) => {
         .get();
 
       if (userSnapshot.empty) {
-        // eslint-disable-next-line object-curly-spacing
         functions.logger.warn("No user found for email", { email });
         res.status(404).send("User not found");
         return;
@@ -105,7 +101,6 @@ app.post("/", async (req, res) => {
         .collection("scheduled_calls")
         .add(callData);
 
-      // eslint-disable-next-line object-curly-spacing
       functions.logger.debug("Call data saved to scheduled_calls", { userId });
       res.status(200).send("Call logged");
       return;

@@ -9,7 +9,6 @@ initializeApp({
 
 const firestore = getFirestore();
 
-// eslint-disable-next-line require-jsdoc
 async function seedFirestoreData() {
   // Seed Mentor data
   const mentors = [

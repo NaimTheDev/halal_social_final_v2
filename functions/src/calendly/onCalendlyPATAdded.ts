@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions/v2/firestore";
-import * as admin from "firebase-admin";
+import admin from "firebase-admin";
 import axios from "axios";
 
 if (!admin.apps.length) admin.initializeApp();

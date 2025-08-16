@@ -23,11 +23,10 @@ module.exports = {
   ],
   plugins: ["@typescript-eslint", "import"],
   rules: {
-    // eslint-disable-next-line quote-props
     quotes: ["error", "double"],
     "import/no-unresolved": 0,
-    // eslint-disable-next-line quote-props
     indent: ["error", 2],
     "quote-props": ["error", "consistent-as-needed"],
+    // Removed require-jsdoc rule as it is not available in flat config
   },
 };
