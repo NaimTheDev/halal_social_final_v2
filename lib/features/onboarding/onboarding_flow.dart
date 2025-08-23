@@ -266,10 +266,12 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.info_outline,
                     color: Theme.of(context).colorScheme.primary,
                     size: 20,
@@ -280,7 +282,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Why add Calendly?',
                         style: TextStyle(
                           fontSize: 14,
@@ -309,7 +311,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             hint: 'https://calendly.com/your-username',
             controller: _calendlyController,
             keyboardType: TextInputType.url,
-            suffixIcon: const Icon(
+            suffixIcon: Icon(
               Icons.calendar_today,
               color: Theme.of(context).colorScheme.primary,
             ),
@@ -486,7 +488,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             value.isEmpty ? 'Not provided' : value,
             style: TextStyle(
               fontSize: 16,
-              color: value.isEmpty ? Colors.grey[400] : Theme.of(context).colorScheme.primary,
+              color:
+                  value.isEmpty
+                      ? Colors.grey[400]
+                      : Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -507,7 +512,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-        side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.primary,
+          width: 1,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
@@ -562,10 +570,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Color(0xFFE74C3C),
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: Color(0xFFE74C3C), width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -656,12 +661,14 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                 onPressed: onPrevious,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Previous',
                   style: TextStyle(
                     fontSize: 16,
@@ -688,10 +695,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               ),
               child: Text(
                 nextText,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -753,7 +757,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Setup Profile',
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
@@ -764,7 +768,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
         leading:
             _currentPage > 0
                 ? IconButton(
-                  icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   onPressed: _previousPage,
                 )
                 : null,
