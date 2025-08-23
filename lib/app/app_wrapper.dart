@@ -157,9 +157,9 @@ class _App extends ConsumerWidget {
   ThemeData _getTheme(AppTheme theme) {
     switch (theme) {
       case AppTheme.light:
-        return appTheme;
+        return lightTheme;
       case AppTheme.dark:
-        return appTheme.copyWith(
+        return lightTheme.copyWith(
           brightness: Brightness.dark,
           colorScheme: const ColorScheme.dark(),
         );

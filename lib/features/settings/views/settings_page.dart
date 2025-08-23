@@ -94,9 +94,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 // Show success message
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Successfully logged out'),
-                      backgroundColor: Colors.green,
+                    SnackBar(
+                      content: const Text('Successfully logged out'),
+                      backgroundColor: Theme.of(context).colorScheme.tertiary,
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -107,14 +107,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Error logging out: ${e.toString()}'),
-                      backgroundColor: Colors.red,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
                 }
               }
             },
-            child: const Text("Log Out", style: TextStyle(color: Colors.black)),
+            child: Text(
+              "Log Out", 
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)
+            ),
           ),
         ],
       ),
@@ -135,14 +138,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   imageUrl: user.imageUrl ?? '',
                   fit: BoxFit.cover,
                   errorWidget:
-                      (context, url, error) => const Icon(
+                      (context, url, error) => Icon(
                         Icons.person,
                         size: 32,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                   placeholder:
-                      (context, url) => const Center(
-                        child: Icon(Icons.person, size: 32, color: Colors.grey),
+                      (context, url) => Center(
+                        child: Icon(
+                          Icons.person, 
+                          size: 32, 
+                          color: Theme.of(context).colorScheme.outline
+                        ),
                       ),
                 ),
               ),
@@ -152,12 +159,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: Colors.black54,
+                  color: Theme.of(context).colorScheme.scrim.withOpacity(0.54),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Center(
+                child: Center(
                   child: CircularProgressIndicator(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                     strokeWidth: 2,
                   ),
                 ),
@@ -180,8 +187,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               Text(
                 'Role: ${user.role.name}',
                 style: TextStyle(
-                  color:
-                      user.role.name == 'mentor' ? Colors.blue : Colors.green,
+                  color: user.role.name == 'mentor' 
+                    ? Theme.of(context).colorScheme.secondary 
+                    : Theme.of(context).colorScheme.tertiary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -206,7 +214,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             const SizedBox(height: 8),
             Text(
               'Update your profile picture',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 16),
             Row(
@@ -250,7 +258,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             const SizedBox(height: 8),
             Text(
               'Add your Calendly URL to allow mentees to book sessions',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 16),
             TextField(

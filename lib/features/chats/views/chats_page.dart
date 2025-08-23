@@ -34,11 +34,11 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Messages'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         elevation: 0,
       ),
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: activeChatsAsync.when(
         data:
             (chats) =>
@@ -58,16 +58,26 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 60, color: Colors.red[300]),
+                  Icon(
+                    Icons.error_outline, 
+                    size: 60, 
+                    color: Theme.of(context).colorScheme.error
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Error loading chats',
-                    style: TextStyle(fontSize: 18, color: Colors.red[700]),
+                    style: TextStyle(
+                      fontSize: 18, 
+                      color: Theme.of(context).colorScheme.error
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Please try again later',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    style: TextStyle(
+                      fontSize: 14, 
+                      color: Theme.of(context).colorScheme.onSurfaceVariant
+                    ),
                   ),
                 ],
               ),
@@ -81,14 +91,18 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.chat_bubble_outline, size: 80, color: Colors.grey[400]),
+          Icon(
+            Icons.chat_bubble_outline, 
+            size: 80, 
+            color: Theme.of(context).colorScheme.outline
+          ),
           const SizedBox(height: 24),
           Text(
             'No conversations yet',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 12),
@@ -97,7 +111,7 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.grey[600],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               height: 1.5,
             ),
           ),
@@ -109,8 +123,8 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
             icon: const Icon(Icons.search),
             label: const Text('Find a Mentor'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
@@ -127,11 +141,11 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -141,7 +155,7 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
           radius: 28,
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           backgroundImage:
               chat.mentor?.imageUrl != null
                   ? NetworkImage(chat.mentor!.imageUrl!)
@@ -151,27 +165,34 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
                   ? Icon(
                     Icons.person,
                     size: 32,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   )
                   : null,
         ),
         title: Text(
           chat.mentor?.name ?? 'Unknown Mentor',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Row(
             children: [
-              Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
+              Icon(
+                Icons.access_time, 
+                size: 14, 
+                color: Theme.of(context).colorScheme.onSurfaceVariant
+              ),
               const SizedBox(width: 4),
               Text(
                 'Last active: ${_formatTime(chat.timestamp)}',
-                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                style: TextStyle(
+                  fontSize: 13, 
+                  color: Theme.of(context).colorScheme.onSurfaceVariant
+                ),
               ),
             ],
           ),
@@ -179,7 +200,7 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
         trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: Colors.grey[400],
+          color: Theme.of(context).colorScheme.outline,
         ),
         onTap: () {
           Navigator.pushNamed(context, '/chat-detail', arguments: chat.chatId);

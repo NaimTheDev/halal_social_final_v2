@@ -22,7 +22,7 @@ class LoginPage extends HookConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error ?? 'Authentication failed'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -62,9 +62,9 @@ class LoginPage extends HookConsumerWidget {
                 onTap: () {
                   // Handle forgot password logic
                 },
-                child: const Text(
+                child: Text(
                   "Forgot your password?",
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
               ),
             ),
@@ -86,9 +86,9 @@ class LoginPage extends HookConsumerWidget {
 
                           if (email.isEmpty || password.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please fill in all fields'),
-                                backgroundColor: Colors.red,
+                              SnackBar(
+                                content: const Text('Please fill in all fields'),
+                                backgroundColor: Theme.of(context).colorScheme.error,
                               ),
                             );
                             return;
@@ -125,7 +125,7 @@ class LoginPage extends HookConsumerWidget {
                     children: [
                       TextSpan(
                         text: 'Sign up',
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
                       ),
                     ],
                   ),

@@ -31,7 +31,7 @@ class SignupPage extends HookConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error ?? 'Signup failed'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -92,12 +92,12 @@ class SignupPage extends HookConsumerWidget {
                       children: [
                         TextSpan(
                           text: "Privacy Policy",
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary),
                         ),
                         TextSpan(text: " and "),
                         TextSpan(
                           text: "T&C",
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary),
                         ),
                       ],
                     ),
@@ -152,13 +152,18 @@ class SignupPage extends HookConsumerWidget {
                         }
                         : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      acceptedTerms.value ? Colors.black : Colors.grey.shade400,
+                  backgroundColor: acceptedTerms.value 
+                    ? Theme.of(context).colorScheme.primary 
+                    : Theme.of(context).colorScheme.outline,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text(
+                child: Text(
                   'Sign Up',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: acceptedTerms.value 
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
@@ -168,13 +173,13 @@ class SignupPage extends HookConsumerWidget {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: const Text.rich(
+                child: Text.rich(
                   TextSpan(
                     text: "Already have an account? ",
                     children: [
                       TextSpan(
                         text: 'Login',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
                       ),
                     ],
                   ),

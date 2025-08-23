@@ -102,7 +102,7 @@ class HomePage extends ConsumerWidget {
               'Upcoming Calls',
               upcomingCalls.length.toString(),
               Icons.video_call,
-              Colors.blue,
+              Theme.of(context).colorScheme.secondary,
               onTap: () {
                 Navigator.push(
                   context,
@@ -118,7 +118,7 @@ class HomePage extends ConsumerWidget {
               'Active Chats',
               activeChatsCount.toString(),
               Icons.chat,
-              Colors.green,
+              Theme.of(context).colorScheme.tertiary,
               onTap: () {
                 Navigator.push(
                   context,
@@ -137,7 +137,7 @@ class HomePage extends ConsumerWidget {
     String title,
     String value,
     IconData icon,
-    Color color, {
+    Color? iconColor, {
     VoidCallback? onTap,
   }) {
     return GestureDetector(
@@ -149,14 +149,18 @@ class HomePage extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              Icon(icon, color: color, size: 24),
+              Icon(
+                icon, 
+                color: iconColor ?? Theme.of(context).colorScheme.primary, 
+                size: 24
+              ),
               const SizedBox(height: 8),
               Text(
                 value,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: color,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 4),
@@ -192,7 +196,11 @@ class HomePage extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.access_time, color: Colors.blue, size: 20),
+                  Icon(
+                    Icons.access_time, 
+                    color: Theme.of(context).colorScheme.primary, 
+                    size: 20
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'Next Call',
@@ -214,7 +222,9 @@ class HomePage extends ConsumerWidget {
                 ).toLocal().toString().split('.').first,
                 style: Theme.of(
                   context,
-                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                ).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant
+                ),
               ),
               const SizedBox(height: 12),
               Align(
@@ -271,7 +281,10 @@ class HomePage extends ConsumerWidget {
           ),
           GestureDetector(
             onTap: onSeeAllPressed,
-            child: const Text('See all', style: TextStyle(color: Colors.blue)),
+            child: Text(
+              'See all', 
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
           ),
         ],
       ),
@@ -320,7 +333,7 @@ class HomePage extends ConsumerWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.grey[200],
+                color: Theme.of(context).colorScheme.surfaceVariant,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -332,11 +345,11 @@ class HomePage extends ConsumerWidget {
                       )
                       : CircleAvatar(
                         radius: 24,
-                        backgroundColor: Colors.grey[400],
-                        child: const Icon(
+                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        child: Icon(
                           Icons.person,
                           size: 24,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
                   const SizedBox(height: 8),
@@ -361,20 +374,12 @@ class HomePage extends ConsumerWidget {
 
   Widget _buildPopularCategories(BuildContext context) {
     final popularCategories = [
-      {'name': 'Theology', 'icon': Icons.menu_book, 'color': Colors.purple},
-      {
-        'name': 'Fitness & Nutrition',
-        'icon': Icons.fitness_center,
-        'color': Colors.red,
-      },
-      {
-        'name': 'Quranic Studies',
-        'icon': Icons.auto_stories,
-        'color': Colors.green,
-      },
-      {'name': 'Coaching', 'icon': Icons.psychology, 'color': Colors.blue},
-      {'name': 'Business', 'icon': Icons.business, 'color': Colors.orange},
-      {'name': 'Mental Health', 'icon': Icons.favorite, 'color': Colors.pink},
+      {'name': 'Theology', 'icon': Icons.menu_book},
+      {'name': 'Fitness & Nutrition', 'icon': Icons.fitness_center},
+      {'name': 'Quranic Studies', 'icon': Icons.auto_stories},
+      {'name': 'Coaching', 'icon': Icons.psychology},
+      {'name': 'Business', 'icon': Icons.business},
+      {'name': 'Mental Health', 'icon': Icons.favorite},
     ];
 
     return Column(
@@ -420,7 +425,7 @@ class HomePage extends ConsumerWidget {
                         children: [
                           Icon(
                             category['icon'] as IconData,
-                            color: category['color'] as Color,
+                            color: Theme.of(context).colorScheme.primary,
                             size: 32,
                           ),
                           const SizedBox(height: 8),
@@ -462,7 +467,7 @@ class HomePage extends ConsumerWidget {
                   context,
                   'Find Mentor',
                   Icons.search,
-                  Colors.blue,
+                  Theme.of(context).colorScheme.primary,
                   () {
                     Navigator.push(
                       context,
@@ -479,7 +484,7 @@ class HomePage extends ConsumerWidget {
                   context,
                   'Schedule Call',
                   Icons.calendar_today,
-                  Colors.green,
+                  Theme.of(context).colorScheme.secondary,
                   () {
                     Navigator.push(
                       context,
@@ -498,7 +503,7 @@ class HomePage extends ConsumerWidget {
                   context,
                   'Browse Chats',
                   Icons.chat,
-                  Colors.orange,
+                  Theme.of(context).colorScheme.tertiary,
                   () {
                     Navigator.push(
                       context,
