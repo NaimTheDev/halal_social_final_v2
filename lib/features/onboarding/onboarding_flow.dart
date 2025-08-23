@@ -200,7 +200,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                               color:
                                   isSelected
                                       ? Colors.white
-                                      : const Theme.of(context).colorScheme.primary,
+                                      : Theme.of(context).colorScheme.primary,
                             ),
                           ),
                           selected: isSelected,
@@ -214,7 +214,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                             });
                           },
                           backgroundColor: Colors.white,
-                          selectedColor: const Theme.of(context).colorScheme.primary,
+                          selectedColor: Theme.of(context).colorScheme.primary,
                           checkmarkColor: Colors.white,
                           elevation: 0,
                           pressElevation: 0,
@@ -223,7 +223,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                             side: BorderSide(
                               color:
                                   isSelected
-                                      ? const Theme.of(context).colorScheme.primary
+                                      ? Theme.of(context).colorScheme.primary
                                       : Colors.grey[300]!,
                             ),
                           ),
@@ -266,7 +266,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -486,7 +486,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             value.isEmpty ? 'Not provided' : value,
             style: TextStyle(
               fontSize: 16,
-              color: value.isEmpty ? Colors.grey[400] : const Theme.of(context).colorScheme.primary,
+              color: value.isEmpty ? Colors.grey[400] : Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -506,7 +506,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
-        backgroundColor: const Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
         side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
@@ -593,9 +593,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               decoration: BoxDecoration(
                 color:
                     isCurrent
-                        ? const Theme.of(context).colorScheme.primary
+                        ? Theme.of(context).colorScheme.primary
                         : isActive
-                        ? const Theme.of(context).colorScheme.primary.withOpacity(0.6)
+                        ? Theme.of(context).colorScheme.primary.withOpacity(0.6)
                         : Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -678,7 +678,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             child: ElevatedButton(
               onPressed: isNextEnabled ? onNext : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -764,7 +764,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
         leading:
             _currentPage > 0
                 ? IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+                  icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
                   onPressed: _previousPage,
                 )
                 : null,

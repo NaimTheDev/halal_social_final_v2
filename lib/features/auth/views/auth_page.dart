@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mentor_app/shared/widgets/common_widgets.dart';
 import '../controllers/auth_controller.dart';
 import '../models/app_user.dart';
 import 'package:mentor_app/features/onboarding/onboarding_flow.dart';
@@ -16,12 +17,42 @@ class AuthPage extends HookConsumerWidget {
     final role = useState<UserRole>(UserRole.mentee);
 
     return Scaffold(
-      appBar: AppBar(title: Text(isLogin.value ? 'Login' : 'Sign Up')),
+      appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const ConnectlyLogo(
+              height: 32,
+              variant: ConnectlyLogoVariant.iconOnly,
+              forDarkBackground: true,
+            ),
+            const SizedBox(width: 12),
+            Text(isLogin.value ? 'Login' : 'Sign Up'),
+          ],
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Connectly logo at the top
+            const Center(
+              child: ConnectlyLogo(
+                height: 120,
+                variant: ConnectlyLogoVariant.full,
+              ),
+            ),
+            const SizedBox(height: 40),
+            Text(
+              isLogin.value ? 'Welcome back!' : 'Join Connectly',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
             TextField(
               controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),

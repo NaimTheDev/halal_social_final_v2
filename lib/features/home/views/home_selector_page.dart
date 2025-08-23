@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/mentors/views/browse_mentors_page.dart';
+import 'package:mentor_app/shared/widgets/common_widgets.dart';
 import '../../auth/controllers/auth_state_controller.dart';
 import '../../auth/models/app_user.dart';
 // import 'mentor_home_page.dart';
@@ -34,7 +35,18 @@ class MentorHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mentor Dashboard"),
+        title: Row(
+          children: [
+            const ConnectlyLogo(
+              height: 32,
+              variant: ConnectlyLogoVariant.iconOnly,
+              forDarkBackground: true,
+            ),
+            const SizedBox(width: 12),
+            const Text("Mentor Dashboard"),
+          ],
+        ),
+        titleSpacing: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -72,7 +84,18 @@ class MenteeHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mentee Dashboard"),
+        title: Row(
+          children: [
+            const ConnectlyLogo(
+              height: 32,
+              variant: ConnectlyLogoVariant.iconOnly,
+              forDarkBackground: true,
+            ),
+            const SizedBox(width: 12),
+            const Text("Mentee Dashboard"),
+          ],
+        ),
+        titleSpacing: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
