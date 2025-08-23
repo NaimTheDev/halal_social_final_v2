@@ -257,9 +257,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FA),
+              color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE9ECEF)),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             child: Row(
               children: [
@@ -570,7 +570,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Color(0xFFE74C3C), width: 2),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.error, 
+                  width: 2
+                ),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -753,7 +756,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
     pages.add(_buildSummaryPage());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
