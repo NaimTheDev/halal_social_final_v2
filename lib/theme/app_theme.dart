@@ -3,56 +3,81 @@ import 'package:flutter/material.dart';
 
 /// Connectly brand colors - orange and white color scheme
 class AppColors {
-  AppColors._();
+  // Primary Brand Colors (Orange from Connectly logo)
+  static const Color primary = Color(0xFFFF8C00);        // Main orange
+  static const Color onPrimary = Color(0xFFFFFFFF);      // White text on orange
+  static const Color primaryContainer = Color(0xFFFFE0B3); // Light orange container
+  static const Color onPrimaryContainer = Color(0xFF331F00); // Dark text on light orange
 
-  // New Connectly orange brand colors (extracted from logo)
-  static const Color primary = Color(0xFFFF8C00); // Connectly orange
-  static const Color primaryLight = Color(0xFFFFB347); // lighter orange
-  static const Color primaryDark = Color(0xFFCC7000); // darker orange
-  static const Color primaryVariant = Color(0xFFCC7000); // darker orange (legacy)
+  // Secondary Colors (Complementary to orange)
+  static const Color secondary = Color(0xFF6F5B40);      // Warm brown
+  static const Color onSecondary = Color(0xFFFFFFFF);    // White on brown
+  static const Color secondaryContainer = Color(0xFFF8DCC6); // Light brown container
+  static const Color onSecondaryContainer = Color(0xFF271A05); // Dark text
+
+  // Tertiary Colors (Blue complement)
+  static const Color tertiary = Color(0xFF516440);       // Olive green
+  static const Color onTertiary = Color(0xFFFFFFFF);     // White on olive
+  static const Color tertiaryContainer = Color(0xFFD3EABC); // Light olive container
+  static const Color onTertiaryContainer = Color(0xFF102004); // Dark text
+
+  // Error Colors
+  static const Color error = Color(0xFFBA1A1A);
+  static const Color onError = Color(0xFFFFFFFF);
+  static const Color errorContainer = Color(0xFFFFDAD6);
+  static const Color onErrorContainer = Color(0xFF410002);
+
+  // Surface Colors
+  static const Color surface = Color(0xFFFFFBFE);         // Main background
+  static const Color onSurface = Color(0xFF1F1B16);      // Main text
+  static const Color surfaceVariant = Color(0xFFF2DFD1);  // Card backgrounds
+  static const Color onSurfaceVariant = Color(0xFF51453A); // Secondary text
   
-  // Secondary colors - complementary to orange
-  static const Color secondary = Color(0xFFFF8C00); // use orange as secondary too
-  static const Color secondaryVariant = Color(0xFFCC7000); // darker orange
-
-  // Background and surface colors - white and light themes
-  static const Color background = Color(0xFFFFFBFE); // slightly warm white
-  static const Color surface = Color(0xFFFFFFFF); // pure white
-  static const Color error = Color(0xFFE74C3C); // red (keep existing)
-
-  // On-colors for contrast
-  static const Color onPrimary = Color(0xFFFFFFFF); // white on orange
-  static const Color onSecondary = Color(0xFFFFFFFF); // white
-  static const Color onBackground = Color(0xFF1C1B1F); // dark text on light background
-  static const Color onSurface = Color(0xFF1C1B1F); // dark text on white surface
-  static const Color onError = Color(0xFFFFFFFF); // white
-
-  // Gray shades - updated to complement orange theme
-  static const Color greyLight = Color(0xFFE6E1E5); // warm light gray
-  static const Color grey = Color(0xFF79747E); // neutral gray
-  static const Color greyDark = Color(0xFF49454F); // warm dark gray
+  // Additional Surface Colors
+  static const Color inverseSurface = Color(0xFF34302A);
+  static const Color onInverseSurface = Color(0xFFF8EFE7);
+  static const Color inversePrimary = Color(0xFFFFB951);
+  
+  // Outline Colors
+  static const Color outline = Color(0xFF837469);
+  static const Color outlineVariant = Color(0xFFD5C3B5);
+  
+  // Special Colors
+  static const Color shadow = Color(0xFF000000);
+  static const Color scrim = Color(0xFF000000);
 }
 
-final ThemeData appTheme = ThemeData(
-  colorScheme: ColorScheme(
+final ThemeData lightTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: const ColorScheme(
     brightness: Brightness.light,
     primary: AppColors.primary,
     onPrimary: AppColors.onPrimary,
-    primaryContainer: AppColors.primaryLight,
-    onPrimaryContainer: AppColors.onSurface,
+    primaryContainer: AppColors.primaryContainer,
+    onPrimaryContainer: AppColors.onPrimaryContainer,
     secondary: AppColors.secondary,
     onSecondary: AppColors.onSecondary,
-    secondaryContainer: AppColors.primaryLight.withOpacity(0.3),
-    onSecondaryContainer: AppColors.onSurface,
-    surface: AppColors.surface,
-    onSurface: AppColors.onSurface,
-    surfaceVariant: AppColors.greyLight,
-    onSurfaceVariant: AppColors.greyDark,
-    background: AppColors.background,
-    onBackground: AppColors.onBackground,
+    secondaryContainer: AppColors.secondaryContainer,
+    onSecondaryContainer: AppColors.onSecondaryContainer,
+    tertiary: AppColors.tertiary,
+    onTertiary: AppColors.onTertiary,
+    tertiaryContainer: AppColors.tertiaryContainer,
+    onTertiaryContainer: AppColors.onTertiaryContainer,
     error: AppColors.error,
     onError: AppColors.onError,
-    outline: AppColors.grey,
+    errorContainer: AppColors.errorContainer,
+    onErrorContainer: AppColors.onErrorContainer,
+    surface: AppColors.surface,
+    onSurface: AppColors.onSurface,
+    surfaceVariant: AppColors.surfaceVariant,
+    onSurfaceVariant: AppColors.onSurfaceVariant,
+    inverseSurface: AppColors.inverseSurface,
+    onInverseSurface: AppColors.onInverseSurface,
+    inversePrimary: AppColors.inversePrimary,
+    outline: AppColors.outline,
+    outlineVariant: AppColors.outlineVariant,
+    shadow: AppColors.shadow,
+    scrim: AppColors.scrim,
   ),
 
   // AppBar uses primary color with Connectly branding
@@ -72,23 +97,23 @@ final ThemeData appTheme = ThemeData(
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: AppColors.surface,
     selectedItemColor: AppColors.primary,
-    unselectedItemColor: AppColors.greyDark,
+    unselectedItemColor: AppColors.onSurfaceVariant,
     showUnselectedLabels: true,
   ),
 
   // Chip styling for those pill-style categories - updated for orange theme
   chipTheme: ChipThemeData(
-    backgroundColor: AppColors.surface,
-    disabledColor: AppColors.greyLight,
-    selectedColor: AppColors.primaryLight.withOpacity(0.2),
-    secondarySelectedColor: AppColors.primaryLight.withOpacity(0.15),
+    backgroundColor: AppColors.surfaceVariant,
+    disabledColor: AppColors.outlineVariant,
+    selectedColor: AppColors.primaryContainer,
+    secondarySelectedColor: AppColors.secondaryContainer,
     padding: const EdgeInsets.symmetric(horizontal: 12),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(20),
-      side: const BorderSide(color: AppColors.greyLight),
+      side: BorderSide(color: AppColors.outline),
     ),
-    labelStyle: const TextStyle(color: AppColors.onSurface),
-    secondaryLabelStyle: const TextStyle(color: AppColors.onSecondary),
+    labelStyle: const TextStyle(color: AppColors.onSurfaceVariant),
+    secondaryLabelStyle: const TextStyle(color: AppColors.onSecondaryContainer),
     brightness: Brightness.light,
   ),
 
@@ -137,10 +162,10 @@ final ThemeData appTheme = ThemeData(
     titleLarge: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.bold,
-      color: AppColors.onBackground,
+      color: AppColors.onSurface,
     ),
-    titleMedium: TextStyle(fontSize: 16, color: AppColors.greyDark),
-    bodyMedium: TextStyle(fontSize: 14, color: AppColors.onBackground),
+    titleMedium: TextStyle(fontSize: 16, color: AppColors.onSurfaceVariant),
+    bodyMedium: TextStyle(fontSize: 14, color: AppColors.onSurface),
     labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
   ),
 
@@ -148,11 +173,11 @@ final ThemeData appTheme = ThemeData(
   inputDecorationTheme: InputDecorationTheme(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.grey),
+      borderSide: const BorderSide(color: AppColors.outline),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.greyLight),
+      borderSide: const BorderSide(color: AppColors.outlineVariant),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -163,9 +188,12 @@ final ThemeData appTheme = ThemeData(
       borderSide: const BorderSide(color: AppColors.error, width: 2),
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    labelStyle: const TextStyle(color: AppColors.greyDark),
-    hintStyle: const TextStyle(color: AppColors.grey),
+    labelStyle: const TextStyle(color: AppColors.onSurfaceVariant),
+    hintStyle: const TextStyle(color: AppColors.outline),
   ),
 
-  scaffoldBackgroundColor: AppColors.background,
+  scaffoldBackgroundColor: AppColors.surface,
 );
+
+// Keep backward compatibility
+final ThemeData appTheme = lightTheme;
