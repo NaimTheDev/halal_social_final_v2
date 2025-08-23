@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
+import 'package:mentor_app/features/auth/controllers/auth_state_controller.dart';
 import 'package:mentor_app/features/auth/models/app_user.dart';
 import 'package:mentor_app/models/chat.dart';
 
 /// Provider for active chats count
 final activeChatsProvider = StreamProvider<List<Chat>>((ref) async* {
-  final appUser = await ref.watch(currentUserProvider.future);
+  final appUser = ref.watch(currentUserProvider);
 
   if (appUser == null) {
     yield [];
@@ -63,7 +63,7 @@ final receiverIdProvider = FutureProvider.family<String?, String>((
   ref,
   chatId,
 ) async {
-  final appUser = await ref.watch(currentUserProvider.future);
+  final appUser = ref.watch(currentUserProvider);
   final chatCollection = FirebaseFirestore.instance.collection('chats');
   final chatDoc = await chatCollection.doc(chatId).get();
 

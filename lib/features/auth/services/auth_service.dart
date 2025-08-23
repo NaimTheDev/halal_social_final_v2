@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/app_user.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/auth_state_controller.dart';
 import '../../mentors/controllers/mentor_state_controller.dart';
 import '../../chats/providers/chat_providers.dart';
 import '../../calls/providers/calls_providers.dart';
-import '../../../core/providers/app_providers.dart';
 
 class AuthService {
   final _auth = FirebaseAuth.instance;
@@ -81,13 +81,7 @@ class AuthService {
         // Clear calls state
         _ref.invalidate(scheduledCallsProvider);
 
-        // Clear any cached user data
-        try {
-          // Clear any specific providers that cache user data
-          _ref.invalidate(appInitializationProvider);
-        } catch (e) {
-          // Provider might not be initialized, continue
-        }
+        // Note: We don't invalidate appInitializationProvider to avoid circular dependency
       }
 
       // Sign out from Firebase

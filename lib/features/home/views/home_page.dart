@@ -25,6 +25,7 @@ class HomePage extends ConsumerWidget {
             SliverToBoxAdapter(child: _buildRecentActivity(context, ref)),
             SliverToBoxAdapter(
               child: _buildSectionHeader(
+                context,
                 'Featured Mentors',
                 onSeeAllPressed: () {
                   Navigator.push(
@@ -150,9 +151,9 @@ class HomePage extends ConsumerWidget {
           child: Column(
             children: [
               Icon(
-                icon, 
-                color: iconColor ?? Theme.of(context).colorScheme.primary, 
-                size: 24
+                icon,
+                color: iconColor ?? Theme.of(context).colorScheme.primary,
+                size: 24,
               ),
               const SizedBox(height: 8),
               Text(
@@ -197,9 +198,9 @@ class HomePage extends ConsumerWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.access_time, 
-                    color: Theme.of(context).colorScheme.primary, 
-                    size: 20
+                    Icons.access_time,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -220,10 +221,8 @@ class HomePage extends ConsumerWidget {
                 DateTime.parse(
                   nextCall.startTime,
                 ).toLocal().toString().split('.').first,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 12),
@@ -269,7 +268,11 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title, {VoidCallback? onSeeAllPressed}) {
+  Widget _buildSectionHeader(
+    BuildContext context,
+    String title, {
+    VoidCallback? onSeeAllPressed,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -282,7 +285,7 @@ class HomePage extends ConsumerWidget {
           GestureDetector(
             onTap: onSeeAllPressed,
             child: Text(
-              'See all', 
+              'See all',
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
           ),

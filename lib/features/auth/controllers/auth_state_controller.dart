@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/app_user.dart';
 import '../services/auth_service.dart';
+import 'auth_controller.dart';
 
 /// Auth state enumeration
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
@@ -124,9 +125,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(error: null);
   }
 }
-
-/// Auth service provider
-final authServiceProvider = Provider<AuthService>((ref) => AuthService(ref));
 
 /// Auth state provider
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((

@@ -8,6 +8,7 @@ import '../features/auth/views/login_page.dart';
 import '../features/shell/main_shell_page.dart';
 import '../theme/app_theme.dart';
 import '../core/navigation/app_router.dart';
+import '../shared/widgets/connectly_logo.dart';
 
 /// Global app state provider
 final appStateProvider = StateNotifierProvider<AppStateNotifier, AppState>((
@@ -33,8 +34,39 @@ class AppWrapper extends ConsumerWidget {
     return appInit.when(
       data: (_) => const _App(),
       loading:
-          () => const MaterialApp(
-            home: Scaffold(body: Center(child: CircularProgressIndicator())),
+          () => MaterialApp(
+            home: Scaffold(
+              backgroundColor: Colors.white,
+              body: SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const ConnectlyLogo(
+                        height: 100,
+                        variant: ConnectlyLogoVariant.full,
+                      ),
+                      const SizedBox(height: 30),
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFFFF8C00),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Initializing...',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
       error:
           (error, stackTrace) => MaterialApp(
@@ -43,7 +75,7 @@ class AppWrapper extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       size: 64,
                       color: Theme.of(context).colorScheme.error,
@@ -105,8 +137,34 @@ class _App extends ConsumerWidget {
       builder: (context, ref, child) {
         switch (authState.status) {
           case AuthStatus.loading:
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+            return Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const ConnectlyLogo(
+                      height: 100,
+                      variant: ConnectlyLogoVariant.full,
+                    ),
+                    const SizedBox(height: 30),
+                    const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFFFF8C00),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Signing you in...',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
           case AuthStatus.authenticated:
             return const MainShellPage();
@@ -118,7 +176,7 @@ class _App extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       size: 64,
                       color: Theme.of(context).colorScheme.error,
@@ -146,8 +204,25 @@ class _App extends ConsumerWidget {
               ),
             );
           case AuthStatus.initial:
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+            return Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const ConnectlyLogo(
+                      height: 100,
+                      variant: ConnectlyLogoVariant.full,
+                    ),
+                    const SizedBox(height: 30),
+                    const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFFFF8C00),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
         }
       },

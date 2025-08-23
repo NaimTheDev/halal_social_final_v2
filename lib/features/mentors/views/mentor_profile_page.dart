@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
+import 'package:mentor_app/features/auth/controllers/auth_state_controller.dart';
 import 'package:mentor_app/models/chat.dart';
 import 'package:mentor_app/shared/widgets/calendly_embed.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,8 +29,7 @@ class _MentorProfilePageState extends ConsumerState<MentorProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appUserAsync = ref.watch(currentUserProvider);
-    final appUser = appUserAsync.asData?.value;
+    final appUser = ref.watch(currentUserProvider);
     return Scaffold(
       appBar: AppBar(title: Text(widget.mentor.name)),
       body: ListView(

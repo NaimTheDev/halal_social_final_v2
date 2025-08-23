@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../controllers/auth_state_controller.dart';
 import '../../../core/error/error_handler.dart';
 import '../../../core/navigation/app_router.dart';
+import '../../../shared/widgets/connectly_logo.dart';
 
 class LoginPage extends HookConsumerWidget {
   const LoginPage({super.key});
@@ -37,6 +38,14 @@ class LoginPage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
+            // Connectly logo
+            Center(
+              child: const ConnectlyLogo(
+                height: 80,
+                variant: ConnectlyLogoVariant.full,
+              ),
+            ),
+            const SizedBox(height: 40),
             const Text(
               'Log in',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -64,7 +73,9 @@ class LoginPage extends HookConsumerWidget {
                 },
                 child: Text(
                   "Forgot your password?",
-                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               ),
             ),
@@ -87,8 +98,11 @@ class LoginPage extends HookConsumerWidget {
                           if (email.isEmpty || password.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('Please fill in all fields'),
-                                backgroundColor: Theme.of(context).colorScheme.error,
+                                content: const Text(
+                                  'Please fill in all fields',
+                                ),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.error,
                               ),
                             );
                             return;
@@ -119,13 +133,15 @@ class LoginPage extends HookConsumerWidget {
                 onTap: () {
                   Navigator.pushNamed(context, '/signup');
                 },
-                child: const Text.rich(
+                child: Text.rich(
                   TextSpan(
                     text: "Don’t have an account? ",
                     children: [
                       TextSpan(
                         text: 'Sign up',
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),

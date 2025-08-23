@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
+import 'package:mentor_app/features/auth/controllers/auth_state_controller.dart';
 import 'package:mentor_app/theme/app_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../shell/main_shell_page.dart';
@@ -259,7 +260,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
             child: Row(
               children: [
@@ -571,8 +574,8 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error, 
-                  width: 2
+                  color: Theme.of(context).colorScheme.error,
+                  width: 2,
                 ),
               ),
               contentPadding: const EdgeInsets.symmetric(

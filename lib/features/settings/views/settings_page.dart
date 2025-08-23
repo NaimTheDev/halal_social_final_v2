@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
 import 'package:mentor_app/features/auth/models/app_user.dart';
 import 'package:mentor_app/models/calendly_token.dart';
 import 'package:mentor_app/core/providers/app_providers.dart' as app_providers;
@@ -115,8 +116,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               }
             },
             child: Text(
-              "Log Out", 
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)
+              "Log Out",
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         ],
@@ -146,9 +147,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   placeholder:
                       (context, url) => Center(
                         child: Icon(
-                          Icons.person, 
-                          size: 32, 
-                          color: Theme.of(context).colorScheme.outline
+                          Icons.person,
+                          size: 32,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                       ),
                 ),
@@ -187,9 +188,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               Text(
                 'Role: ${user.role.name}',
                 style: TextStyle(
-                  color: user.role.name == 'mentor' 
-                    ? Theme.of(context).colorScheme.secondary 
-                    : Theme.of(context).colorScheme.tertiary,
+                  color:
+                      user.role.name == 'mentor'
+                          ? Theme.of(context).colorScheme.secondary
+                          : Theme.of(context).colorScheme.tertiary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -214,7 +216,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             const SizedBox(height: 8),
             Text(
               'Update your profile picture',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -258,7 +262,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             const SizedBox(height: 8),
             Text(
               'Add your Calendly URL to allow mentees to book sessions',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
