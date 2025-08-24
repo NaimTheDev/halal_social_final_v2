@@ -124,7 +124,7 @@ class _App extends ConsumerWidget {
     }
 
     return MaterialApp(
-      title: 'Mentor App',
+      title: 'Connectly',
       theme: _getTheme(appState.theme),
       home: _buildHome(authState),
       onGenerateRoute: RouteGenerator.generateRoute,
