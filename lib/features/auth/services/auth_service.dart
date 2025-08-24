@@ -61,36 +61,33 @@ class AuthService {
   /// Similar to the pattern used in other projects for proper cleanup
   Future<void> signOut() async {
     try {
-      // Clear any user-specific state providers if ref is available
-      if (_ref != null) {
-        // Invalidate user-related providers to clear cached data
-        _ref.invalidate(currentUserProvider);
-        _ref.invalidate(authStateChangesProvider);
-
-        // Clear mentor-related state
-        try {
-          final mentorStateController = _ref.read(mentorStateProvider.notifier);
-          mentorStateController.clearState();
-        } catch (e) {
-          // Provider might not be initialized, continue
-        }
-
-        // Clear chats state
-        _ref.invalidate(activeChatsProvider);
-
-        // Clear calls state
-        _ref.invalidate(scheduledCallsProvider);
-
-        // Note: We don't invalidate appInitializationProvider to avoid circular dependency
-      }
-
-      // Sign out from Firebase
+      // Sign out from Firebase - this will trigger authStateChanges()
+      // which should handle all state clearing automatically
       await _auth.signOut();
-      print(
-        'User signed out successfully - all state cleared',
-      ); // Debugging log
+
+      // Only manually clear non-auth dependent state if ref is available
+      // if (_ref != null) {
+      //   // Clear mentor-specific state that might not auto-clear
+      //   try {
+      //     final mentorStateController = _ref.read(mentorStateProvider.notifier);
+      //     mentorStateController.clearState();
+      //   } catch (e) {
+      //     // Provider might not be initialized, continue
+      //     print('Could not clear mentor state: $e');
+      //   }
+
+      //   // Manually invalidate providers that don't listen to auth changes
+      //   // Only invalidate if they don't depend on auth providers
+      //   // _ref.invalidate(activeChatsProvider);
+      //   // _ref.invalidate(scheduledCallsProvider);
+
+      //   // Note: We don't invalidate currentUserProvider or authStateChangesProvider
+      //   // as they should update automatically when _auth.signOut() is called
+      // }
+
+      print('User signed out successfully');
     } catch (e) {
-      print('Error during sign out: ${e.toString()}'); // Debugging log
+      print('Error during sign out: ${e.toString()}');
       throw FirebaseAuthException(
         code: 'signout-error',
         message: 'Error during sign out: ${e.toString()}',
