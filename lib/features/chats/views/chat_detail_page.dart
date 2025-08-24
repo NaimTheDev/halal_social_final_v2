@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
+import 'package:mentor_app/features/auth/controllers/auth_state_controller.dart';
 import 'package:mentor_app/features/auth/models/app_user.dart';
 import 'package:mentor_app/features/chats/widgets/message_widget.dart';
 import 'package:mentor_app/models/message.dart';
@@ -45,7 +45,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
 
   Future<void> _sendMessage(String message, Chat chat) async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
-    final appUser = await ref.read(currentUserProvider.future);
+    final appUser = ref.read(currentUserProvider);
 
     if (userId != null && message.trim().isNotEmpty) {
       // Determine receiverId based on whether appUser is mentor or not

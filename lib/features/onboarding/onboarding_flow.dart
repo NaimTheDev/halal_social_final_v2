@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
+import 'package:mentor_app/features/auth/controllers/auth_state_controller.dart';
+import 'package:mentor_app/theme/app_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../shell/main_shell_page.dart';
 
@@ -175,10 +177,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               children: [
                 Text(
                   'Selected (${_selectedCategories.length})',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2C3E50),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -199,7 +201,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                               color:
                                   isSelected
                                       ? Colors.white
-                                      : const Color(0xFF2C3E50),
+                                      : Theme.of(context).colorScheme.primary,
                             ),
                           ),
                           selected: isSelected,
@@ -213,7 +215,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                             });
                           },
                           backgroundColor: Colors.white,
-                          selectedColor: const Color(0xFF2C3E50),
+                          selectedColor: Theme.of(context).colorScheme.primary,
                           checkmarkColor: Colors.white,
                           elevation: 0,
                           pressElevation: 0,
@@ -222,7 +224,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                             side: BorderSide(
                               color:
                                   isSelected
-                                      ? const Color(0xFF2C3E50)
+                                      ? Theme.of(context).colorScheme.primary
                                       : Colors.grey[300]!,
                             ),
                           ),
@@ -256,21 +258,25 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FA),
+              color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE9ECEF)),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2C3E50).withOpacity(0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.info_outline,
-                    color: Color(0xFF2C3E50),
+                    color: Theme.of(context).colorScheme.primary,
                     size: 20,
                   ),
                 ),
@@ -279,12 +285,12 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Why add Calendly?',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF2C3E50),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -308,9 +314,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             hint: 'https://calendly.com/your-username',
             controller: _calendlyController,
             keyboardType: TextInputType.url,
-            suffixIcon: const Icon(
+            suffixIcon: Icon(
               Icons.calendar_today,
-              color: Color(0xFF2C3E50),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 40),
@@ -453,10 +459,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2C3E50),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 16),
@@ -485,7 +491,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             value.isEmpty ? 'Not provided' : value,
             style: TextStyle(
               fontSize: 16,
-              color: value.isEmpty ? Colors.grey[400] : const Color(0xFF2C3E50),
+              color:
+                  value.isEmpty
+                      ? Colors.grey[400]
+                      : Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -499,14 +508,17 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
       child: Chip(
         label: Text(
           category,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF2C3E50),
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
-        backgroundColor: const Color(0xFF2C3E50).withOpacity(0.1),
-        side: const BorderSide(color: Color(0xFF2C3E50), width: 1),
+        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.primary,
+          width: 1,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
@@ -527,10 +539,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF2C3E50),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -538,7 +550,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             controller: controller,
             maxLines: maxLines,
             keyboardType: keyboardType,
-            style: const TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: Colors.grey[400], fontSize: 16),
@@ -554,15 +566,15 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: Color(0xFF2C3E50),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
                   width: 2,
                 ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: Color(0xFFE74C3C),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.error,
                   width: 2,
                 ),
               ),
@@ -592,9 +604,9 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               decoration: BoxDecoration(
                 color:
                     isCurrent
-                        ? const Color(0xFF2C3E50)
+                        ? Theme.of(context).colorScheme.primary
                         : isActive
-                        ? const Color(0xFF2C3E50).withOpacity(0.6)
+                        ? Theme.of(context).colorScheme.primary.withOpacity(0.6)
                         : Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -617,10 +629,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2C3E50),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -655,17 +667,19 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
                 onPressed: onPrevious,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: const BorderSide(color: Color(0xFF2C3E50)),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Previous',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2C3E50),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -677,7 +691,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
             child: ElevatedButton(
               onPressed: isNextEnabled ? onNext : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2C3E50),
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -687,10 +701,7 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
               ),
               child: Text(
                 nextText,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -748,14 +759,14 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
     pages.add(_buildSummaryPage());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Setup Profile',
           style: TextStyle(
-            color: Color(0xFF2C3E50),
+            color: Theme.of(context).colorScheme.primary,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -763,7 +774,10 @@ class _OnboardingFlowState extends ConsumerState<OnboardingFlow>
         leading:
             _currentPage > 0
                 ? IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Color(0xFF2C3E50)),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   onPressed: _previousPage,
                 )
                 : null,

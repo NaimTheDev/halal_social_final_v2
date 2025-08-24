@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mentor_app/features/auth/controllers/auth_controller.dart';
 import '../controllers/auth_state_controller.dart';
 import '../models/app_user.dart';
 import 'package:mentor_app/features/onboarding/onboarding_flow.dart';
+import '../../../shared/widgets/connectly_logo.dart';
 
 class SignupPage extends HookConsumerWidget {
   const SignupPage({super.key});
@@ -31,7 +33,7 @@ class SignupPage extends HookConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error ?? 'Signup failed'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -45,6 +47,14 @@ class SignupPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Connectly logo
+            Center(
+              child: const ConnectlyLogo(
+                height: 80,
+                variant: ConnectlyLogoVariant.full,
+              ),
+            ),
+            const SizedBox(height: 32),
             const Text(
               'Sign up',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -85,19 +95,23 @@ class SignupPage extends HookConsumerWidget {
                   value: acceptedTerms.value,
                   onChanged: (value) => acceptedTerms.value = value ?? false,
                 ),
-                const Expanded(
+                Expanded(
                   child: Text.rich(
                     TextSpan(
                       text: "I agree with ",
                       children: [
                         TextSpan(
                           text: "Privacy Policy",
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                         TextSpan(text: " and "),
                         TextSpan(
                           text: "T&C",
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                       ],
                     ),
@@ -153,12 +167,19 @@ class SignupPage extends HookConsumerWidget {
                         : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      acceptedTerms.value ? Colors.black : Colors.grey.shade400,
+                      acceptedTerms.value
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.outline,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text(
+                child: Text(
                   'Sign Up',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color:
+                        acceptedTerms.value
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
@@ -168,13 +189,15 @@ class SignupPage extends HookConsumerWidget {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: const Text.rich(
+                child: Text.rich(
                   TextSpan(
                     text: "Already have an account? ",
                     children: [
                       TextSpan(
                         text: 'Login',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),

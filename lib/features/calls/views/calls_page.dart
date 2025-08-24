@@ -130,7 +130,11 @@ class AppointmentCard extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.access_time, size: 20, color: Colors.grey),
+                Icon(
+                  Icons.access_time,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +232,11 @@ class _EmptyCallTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.calendar_month, size: 60, color: Colors.grey[400]),
+          Icon(
+            Icons.calendar_month,
+            size: 60,
+            color: Theme.of(context).colorScheme.outline,
+          ),
           const SizedBox(height: 16),
           Text(
             label,

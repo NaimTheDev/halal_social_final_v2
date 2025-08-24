@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+// Export the ConnectlyLogo widget
+export 'connectly_logo.dart';
+
 /// Error boundary widget that catches and displays errors
 class ErrorBoundary extends ConsumerWidget {
   final Widget child;
