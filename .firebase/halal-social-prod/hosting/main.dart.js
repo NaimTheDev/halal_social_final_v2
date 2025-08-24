@@ -99176,7 +99176,7 @@ A.AS.prototype={
 jv(a,b){var s,r=b.cV($.CC(),t.FB),q=b.cV($.aU0(),t.Tz)
 b.cV($.b5u(),t.wm)
 s=this.agU(q.d)
-return A.aQW(!1,this.acy(r),A.bib(),s,"Mentor App")},
+return A.aQW(!1,this.acy(r),A.bib(),s,"Connectly")},
 acy(a){return A.aV1(new A.aAQ(a))},
 agU(a){switch(a.a){case 0:return $.aU8()
 case 1:return $.aU8().auI(B.a8,B.GN)}}}
