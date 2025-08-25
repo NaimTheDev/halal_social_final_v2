@@ -20,7 +20,19 @@ final storageServiceProvider = Provider<StorageService>(
 
 /// App initialization provider
 final appInitializationProvider = FutureProvider<void>((ref) async {
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp();
+  try {
+    print('🔥 Starting app initialization...');
+    if (Firebase.apps.isEmpty) {
+      print('🔥 Initializing Firebase...');
+      await Firebase.initializeApp();
+      print('🔥 Firebase initialized successfully');
+    } else {
+      print('🔥 Firebase already initialized');
+    }
+    print('🔥 App initialization completed');
+  } catch (e, stackTrace) {
+    print('❌ App initialization failed: $e');
+    print('Stack trace: $stackTrace');
+    rethrow;
   }
 });

@@ -3,6 +3,14 @@
     "prod": "halal-social-prod",
     "default": "halal-social-prod"
   },
-  "targets": {},
+  "targets": {
+    "halal-social-prod": {
+      "hosting": {
+        "app": [
+          "halal-social-prod"
+        ]
+      }
+    }
+  },
   "etags": {}
 }
